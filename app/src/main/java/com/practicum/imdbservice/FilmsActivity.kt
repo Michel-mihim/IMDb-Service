@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
@@ -50,6 +51,9 @@ class FilmsActivity : AppCompatActivity() {
 
         adapter.films = films
 
+        filmsList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        filmsList.adapter = adapter
+
         searchButton.setOnClickListener{
             if (expressionInput.text.isNotEmpty()) {
                 search()
@@ -64,22 +68,22 @@ class FilmsActivity : AppCompatActivity() {
             override fun onResponse(call: Call<FilmsResponse>, response: Response<FilmsResponse>) {
                 when (response.code()) {
                     200 -> {
-                        if (response.body()?.films.isNotEmpty() == true) {
+                        if (response.body()?.films?.isNotEmpty() == true) {
                             films.clear()
                             films.addAll(response.body()?.films!!)
                             adapter.notifyDataSetChanged()
                         } else {
-                            Toast.makeText(this@FilmsActivity, "Ничего не найдено", Toast.LENGTH_SHORT)
+                            Toast.makeText(this@FilmsActivity, "Ничего не найдено", Toast.LENGTH_SHORT).show()
                         }
                     }
                     else -> {
-                        Toast.makeText(this@FilmsActivity, "Что-то пошло не так..", Toast.LENGTH_SHORT)
+                        Toast.makeText(this@FilmsActivity, "Что-то пошло не так..", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
 
             override fun onFailure(call: Call<FilmsResponse>, t: Throwable) {
-                Toast.makeText(this@FilmsActivity, "Что-то пошло не так..", Toast.LENGTH_SHORT)
+                Toast.makeText(this@FilmsActivity, "Что-то пошло не так..", Toast.LENGTH_SHORT).show()
             }
         })
     }
