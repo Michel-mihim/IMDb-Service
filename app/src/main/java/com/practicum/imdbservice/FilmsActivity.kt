@@ -1,6 +1,5 @@
 package com.practicum.imdbservice
 
-import android.content.Context
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -61,6 +60,7 @@ class FilmsActivity : AppCompatActivity() {
 
     private fun search() {
         imdbService.getFilms(expressionInput.text.toString()).enqueue(object : Callback<FilmsResponse> {
+
             override fun onResponse(call: Call<FilmsResponse>, response: Response<FilmsResponse>) {
                 when (response.code()) {
                     200 -> {
@@ -68,12 +68,18 @@ class FilmsActivity : AppCompatActivity() {
                             films.clear()
                             films.addAll(response.body()?.films!!)
                             adapter.notifyDataSetChanged()
+                        } else {
+                            Toast.makeText(this@FilmsActivity, "Ничего не найдено", Toast.LENGTH_SHORT)
                         }
                     }
                     else -> {
                         Toast.makeText(this@FilmsActivity, "Что-то пошло не так..", Toast.LENGTH_SHORT)
                     }
                 }
+            }
+
+            override fun onFailure(call: Call<FilmsResponse>, t: Throwable) {
+                Toast.makeText(this@FilmsActivity, "Что-то пошло не так..", Toast.LENGTH_SHORT)
             }
         })
     }
