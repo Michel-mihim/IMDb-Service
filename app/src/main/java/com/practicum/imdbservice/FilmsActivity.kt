@@ -29,11 +29,11 @@ class FilmsActivity : AppCompatActivity() {
 
     private val films = ArrayList<Film>()
 
-    private val adapter = FilmsAdapter()
+    private val adapter = FilmsAdapter(films)
 
     private lateinit var searchButton: Button
     private lateinit var expressionInput: EditText
-    private lateinit var filmsList: RecyclerView
+    private lateinit var filmsRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,13 +48,7 @@ class FilmsActivity : AppCompatActivity() {
         searchButton = findViewById(R.id.searchButton)
         expressionInput = findViewById(R.id.expressionInput)
 
-        filmsList = findViewById(R.id.films)
-
-        //наполняем адаптер значениями
-        adapter.films = films
-
-        filmsList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        filmsList.adapter = adapter
+        filmsRecyclerView = findViewById(R.id.filmsRecycler)
 
         searchButton.setOnClickListener{
             if (expressionInput.text.isNotEmpty()) {
@@ -71,9 +65,13 @@ class FilmsActivity : AppCompatActivity() {
                 when (response.code()) {
                     200 -> {
                         if (response.body()?.films?.isNotEmpty() == true) {
+                            //наполняем адаптер значениями
                             films.clear()
                             films.addAll(response.body()?.films!!)
+
+                            filmsRecyclerView.adapter = FilmsAdapter(films)
                             adapter.notifyDataSetChanged()
+                            filmsRecyclerView.layoutManager = LinearLayoutManager(this@FilmsActivity, LinearLayoutManager.VERTICAL, false)
                         } else {
                             Toast.makeText(this@FilmsActivity, "Ничего не найдено", Toast.LENGTH_SHORT).show()
                         }

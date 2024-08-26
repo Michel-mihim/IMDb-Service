@@ -1,16 +1,20 @@
 package com.practicum.imdbservice
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class FilmsAdapter() : RecyclerView.Adapter<FilmViewHolder>() {
+class FilmsAdapter(
+    private val films: List<Film>
+) : RecyclerView.Adapter<FilmViewHolder>() {
 
-    var films = ArrayList<Film>()
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder = FilmViewHolder(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.film_list_item, parent, false)
+        return FilmViewHolder(view)
+    }
 
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
-        holder.bind(films.get(position))
+        holder.bind(films[position])
     }
 
     override fun getItemCount(): Int = films.size

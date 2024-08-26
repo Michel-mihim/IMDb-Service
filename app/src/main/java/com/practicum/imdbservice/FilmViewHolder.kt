@@ -1,19 +1,23 @@
 package com.practicum.imdbservice
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class FilmViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(LayoutInflater.from(parent.context)
-    .inflate(R.layout.film_list_item, parent,false)) {
+class FilmViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    private val film_name: TextView
+    private val film_information: TextView
 
-    var film_name: TextView = itemView.findViewById(R.id.film_name)
-    var film_information: TextView = itemView.findViewById(R.id.film_information)
+    init {
+        film_name = itemView.findViewById(R.id.film_name)
+        film_information = itemView.findViewById(R.id.film_information)
+    }
 
     fun bind(film: Film) {
-        film_name.text = film.title //?
-        film_information.text = film.description //?
+        film_name.text = film.title
+        film_information.text = film.description
     }
 
 }
