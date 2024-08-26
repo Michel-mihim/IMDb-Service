@@ -50,6 +50,9 @@ class FilmsActivity : AppCompatActivity() {
 
         filmsRecyclerView = findViewById(R.id.filmsRecycler)
 
+        filmsRecyclerView.layoutManager = LinearLayoutManager(this@FilmsActivity, LinearLayoutManager.VERTICAL, false)
+        filmsRecyclerView.adapter = adapter
+
         searchButton.setOnClickListener{
             if (expressionInput.text.isNotEmpty()) {
                 search()
@@ -64,20 +67,18 @@ class FilmsActivity : AppCompatActivity() {
             override fun onResponse(call: Call<FilmsResponse>, response: Response<FilmsResponse>) {
                 when (response.code()) {
                     200 -> {
-                        if (response.body()?.films?.isNotEmpty() == true) {
+                        if (response.body()?.results?.isNotEmpty() == true) {
                             //наполняем адаптер значениями
                             films.clear()
-                            films.addAll(response.body()?.films!!)
-
-                            filmsRecyclerView.adapter = FilmsAdapter(films)
+                            films.addAll(response.body()?.results!!)
                             adapter.notifyDataSetChanged()
-                            filmsRecyclerView.layoutManager = LinearLayoutManager(this@FilmsActivity, LinearLayoutManager.VERTICAL, false)
+                            Toast.makeText(this@FilmsActivity, "Поиск успешно произведен!", Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(this@FilmsActivity, "Ничего не найдено", Toast.LENGTH_SHORT).show()
                         }
                     }
                     else -> {
-                        Toast.makeText(this@FilmsActivity, "Что-то пошло не так..", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@FilmsActivity, "Код ошибки: ${response.code()}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
