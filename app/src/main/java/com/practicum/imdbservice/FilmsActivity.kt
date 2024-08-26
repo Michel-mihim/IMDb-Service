@@ -47,8 +47,10 @@ class FilmsActivity : AppCompatActivity() {
 
         searchButton = findViewById(R.id.searchButton)
         expressionInput = findViewById(R.id.expressionInput)
+
         filmsList = findViewById(R.id.films)
 
+        //наполняем адаптер значениями
         adapter.films = films
 
         filmsList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)

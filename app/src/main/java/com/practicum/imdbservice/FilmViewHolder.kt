@@ -12,8 +12,8 @@ class FilmViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(LayoutInflater.
     var film_information: TextView = itemView.findViewById(R.id.film_information)
 
     fun bind(film: Film) {
-        film_name.text = film.name
-        film_information.text = film.information
+        film_name.text = film.title //?
+        film_information.text = film.description //?
     }
 
 }
