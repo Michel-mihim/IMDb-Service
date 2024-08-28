@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 class FilmViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     private val film_name: TextView
@@ -18,6 +19,7 @@ class FilmViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     fun bind(film: Film) {
         film_name.text = film.title
         film_information.text = film.description
+        Glide.with(itemView.context).load(film.image).placeholder()
     }
 
 }
