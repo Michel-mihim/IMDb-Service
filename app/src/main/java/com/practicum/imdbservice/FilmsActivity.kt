@@ -1,6 +1,7 @@
 package com.practicum.imdbservice
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -50,15 +51,11 @@ class FilmsActivity : AppCompatActivity() {
 
         filmsRecyclerView = findViewById(R.id.filmsRecycler)
 
-        filmsRecyclerView.layoutManager = LinearLayoutManager(this@FilmsActivity, LinearLayoutManager.VERTICAL, false)
-        filmsRecyclerView.adapter = adapter
-
         searchButton.setOnClickListener{
             if (expressionInput.text.isNotEmpty()) {
                 search()
             }
         }
-
     }
 
     private fun search() {
@@ -70,8 +67,15 @@ class FilmsActivity : AppCompatActivity() {
                         if (response.body()?.results?.isNotEmpty() == true) {
                             //наполняем адаптер значениями
                             films.clear()
+
                             films.addAll(response.body()?.results!!)
+
+                            Log.d("Films", films.toString())
+                            filmsRecyclerView.adapter = FilmsAdapter(films)
+                            filmsRecyclerView.layoutManager = LinearLayoutManager(this@FilmsActivity, LinearLayoutManager.VERTICAL, false)
                             adapter.notifyDataSetChanged()
+                            println(films)
+
                             Toast.makeText(this@FilmsActivity, "Поиск успешно произведен!", Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(this@FilmsActivity, "Ничего не найдено", Toast.LENGTH_SHORT).show()
