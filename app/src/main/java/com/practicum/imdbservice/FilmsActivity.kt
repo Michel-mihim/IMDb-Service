@@ -70,11 +70,9 @@ class FilmsActivity : AppCompatActivity() {
 
                             films.addAll(response.body()?.results!!)
 
-                            Log.d("Films", films.toString())
                             filmsRecyclerView.adapter = FilmsAdapter(films)
                             filmsRecyclerView.layoutManager = LinearLayoutManager(this@FilmsActivity, LinearLayoutManager.VERTICAL, false)
                             adapter.notifyDataSetChanged()
-                            println(films)
 
                             Toast.makeText(this@FilmsActivity, "Поиск успешно произведен!", Toast.LENGTH_SHORT).show()
                         } else {
