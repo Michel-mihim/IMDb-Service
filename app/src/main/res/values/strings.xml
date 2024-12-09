@@ -45,4 +45,6 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="something_went_wrong">Что-то пошло не так..</string>
 </resources>
