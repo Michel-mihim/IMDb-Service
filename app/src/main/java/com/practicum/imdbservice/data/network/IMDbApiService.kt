@@ -1,6 +1,6 @@
 package com.practicum.imdbservice.data.network
 
-import com.practicum.imdbservice.MoviesSearchResponse
+import com.practicum.imdbservice.data.dto.MoviesSearchResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

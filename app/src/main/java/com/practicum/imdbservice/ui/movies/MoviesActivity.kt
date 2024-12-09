@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -14,10 +15,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.imdbservice.MoviesSearchResponse
+import com.practicum.imdbservice.data.dto.MoviesSearchResponse
 import com.practicum.imdbservice.ui.poster.PosterActivity
 import com.practicum.imdbservice.R
+import com.practicum.imdbservice.data.creator.Creator
 import com.practicum.imdbservice.data.network.IMDbApiService
+import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.models.Movie
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,12 +37,7 @@ class MoviesActivity : Activity() {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(imdbBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val imdbService = retrofit.create(IMDbApiService::class.java)
+    private lateinit var moviesInteractor: MoviesInteractor
 
     private lateinit var queryInput: EditText
     private lateinit var placeholderMessage: TextView
@@ -77,6 +75,8 @@ class MoviesActivity : Activity() {
         moviesList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         moviesList.adapter = adapter
 
+        moviesInteractor = Creator.provideMoviesInteractor()
+
         queryInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
@@ -98,24 +98,40 @@ class MoviesActivity : Activity() {
 
     private fun searchRequest() {
         if (queryInput.text.isNotEmpty()) {
-
-            placeholderMessage.visibility = View.GONE
-            moviesList.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
+            moviesList.visibility = View.GONE
+            placeholderMessage.visibility = View.GONE
 
+            moviesInteractor.searchMovies(queryInput.text.toString(), object: MoviesInteractor.MoviesConsumer{
+                override fun consume(foundMovies: List<Movie>) {
+                    handler.post {
+                        movies.clear()
+                        movies.addAll(foundMovies)
+                        adapter.notifyDataSetChanged()
+                        if (foundMovies.isEmpty()) {
+                            showMessage(getString(R.string.nothing_found), "")
+                            placeholderMessage.visibility = View.VISIBLE
+                        } else placeholderMessage.visibility = View.GONE
+                        progressBar.visibility = View.GONE
+                        moviesList.visibility = View.VISIBLE
+                    }
+                }
+            } )
+
+            /*
             imdbService.searchMovies(queryInput.text.toString()).enqueue(object : Callback<MoviesSearchResponse> {
                 override fun onResponse(call: Call<MoviesSearchResponse>,
                                         response: Response<MoviesSearchResponse>) {
-                    progressBar.visibility = View.GONE
+                    //progressBar.visibility = View.GONE
                     if (response.code() == 200) {
-                        movies.clear()
+                        //movies.clear()
                         if (response.body()?.results?.isNotEmpty() == true) {
-                            moviesList.visibility = View.VISIBLE
-                            movies.addAll(response.body()?.results!!)
-                            adapter.notifyDataSetChanged()
+                            //moviesList.visibility = View.VISIBLE
+                            //movies.addAll(response.body()?.results!!)
+                            //adapter.notifyDataSetChanged()
                         }
                         if (movies.isEmpty()) {
-                            showMessage(getString(R.string.nothing_found), "")
+                            //showMessage(getString(R.string.nothing_found), "")
                         } else {
                             hideMessage()
                         }
@@ -128,7 +144,7 @@ class MoviesActivity : Activity() {
                     progressBar.visibility = View.GONE
                     showMessage(getString(R.string.something_went_wrong), t.message.toString())
                 }
-            })
+            }) */
         }
     }
 
