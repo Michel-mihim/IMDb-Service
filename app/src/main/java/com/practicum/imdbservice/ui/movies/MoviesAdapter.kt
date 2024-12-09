@@ -1,7 +1,8 @@
-package com.practicum.imdbservice
+package com.practicum.imdbservice.ui.movies
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.imdbservice.domain.models.Movie
 
 class MoviesAdapter(private val clickListener: MovieClickListener) : RecyclerView.Adapter<MovieViewHolder>() {
 

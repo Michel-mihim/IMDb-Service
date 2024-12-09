@@ -1,4 +1,4 @@
-package com.practicum.imdbservice
+package com.practicum.imdbservice.domain.models
 
 data class Movie(val id: String,
                  val resultType: String,
