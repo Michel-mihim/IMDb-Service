@@ -107,34 +107,6 @@ class MoviesActivity : Activity() {
                     }
                 }
             } )
-
-            /*
-            imdbService.searchMovies(queryInput.text.toString()).enqueue(object : Callback<MoviesSearchResponse> {
-                override fun onResponse(call: Call<MoviesSearchResponse>,
-                                        response: Response<MoviesSearchResponse>) {
-                    //progressBar.visibility = View.GONE
-                    if (response.code() == 200) {
-                        //movies.clear()
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            //moviesList.visibility = View.VISIBLE
-                            //movies.addAll(response.body()?.results!!)
-                            //adapter.notifyDataSetChanged()
-                        }
-                        if (movies.isEmpty()) {
-                            //showMessage(getString(R.string.nothing_found), "")
-                        } else {
-                            hideMessage()
-                        }
-                    } else {
-                        showMessage(getString(R.string.something_went_wrong), response.code().toString())
-                    }
-                }
-
-                override fun onFailure(call: Call<MoviesSearchResponse>, t: Throwable) {
-                    progressBar.visibility = View.GONE
-                    showMessage(getString(R.string.something_went_wrong), t.message.toString())
-                }
-            }) */
         }
     }
 
