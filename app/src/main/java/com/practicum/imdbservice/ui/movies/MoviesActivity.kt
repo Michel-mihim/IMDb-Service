@@ -5,20 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.practicum.imdbservice.ui.poster.PosterActivity
 import com.practicum.imdbservice.R
-import com.practicum.imdbservice.data.creator.Creator
-import com.practicum.imdbservice.domain.api.MoviesInteractor
-import com.practicum.imdbservice.domain.models.Movie
+import com.practicum.imdbservice.util.Creator
 
 class MoviesActivity : Activity() {
 

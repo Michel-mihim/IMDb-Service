@@ -6,7 +6,6 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.Adapter
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -14,7 +13,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.imdbservice.R
-import com.practicum.imdbservice.data.creator.Creator
+import com.practicum.imdbservice.util.Creator
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.ui.movies.MoviesAdapter
@@ -52,16 +51,23 @@ class MoviesSearchController(
             placeholderMessage.visibility = View.GONE
 
             moviesInteractor.searchMovies(queryInput.text.toString(), object: MoviesInteractor.MoviesConsumer{
-                override fun consume(foundMovies: List<Movie>) {
+                override fun consume(foundMovies: List<Movie>?, errorMessage: String?) {
                     handler.post {
-                        movies.clear()
-                        movies.addAll(foundMovies)
-                        adapter.notifyDataSetChanged()
-                        if (foundMovies.isEmpty()) {
+                        if (foundMovies != null) {
+                            movies.clear()
+                            movies.addAll(foundMovies)
+                            adapter.notifyDataSetChanged()
+                            moviesList.visibility = View.VISIBLE
+
+                        }
+                        if (errorMessage != null) {
+                            showMessage(activity.getString(R.string.nothing_found), errorMessage)
+                        } else if (movies.isEmpty()) {
                             showMessage(activity.getString(R.string.nothing_found), "")
-                        } else hideMessage()
+                        } else {
+                            hideMessage()
+                        }
                         progressBar.visibility = View.GONE
-                        moviesList.visibility = View.VISIBLE
                     }
                 }
             } )

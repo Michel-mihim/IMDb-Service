@@ -1,4 +1,4 @@
-package com.practicum.imdbservice.data.creator
+package com.practicum.imdbservice.util
 
 import android.app.Activity
 import android.content.Context
