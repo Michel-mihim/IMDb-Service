@@ -13,4 +13,6 @@ interface MoviesView {
     fun changePlaceholderText(newPlaceholderText: String)
 
     fun updateMoviesList(newMoviesList: List<Movie>)
+
+    fun showMessage(message: String)
 }

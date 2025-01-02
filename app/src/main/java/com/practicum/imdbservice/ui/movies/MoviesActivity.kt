@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.imdbservice.ui.poster.PosterActivity
@@ -67,6 +68,10 @@ class MoviesActivity : Activity(), MoviesView {
         adapter.movies.clear()
         adapter.movies.addAll(newMoviesList)
         adapter.notifyDataSetChanged()
+    }
+
+    override fun showMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

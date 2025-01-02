@@ -8,9 +8,9 @@ import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.api.MoviesRepository
 import com.practicum.imdbservice.domain.impl.MoviesInteractorImpl
 import com.practicum.imdbservice.presentation.movies.MoviesSearchPresenter
-import com.practicum.imdbservice.presentation.PosterController
+import com.practicum.imdbservice.presentation.poster.PosterPresenter
 import com.practicum.imdbservice.presentation.movies.MoviesView
-import com.practicum.imdbservice.ui.movies.MoviesAdapter
+import com.practicum.imdbservice.presentation.poster.PosterView
 
 object Creator {
     fun provideMoviesInteractor(context: Context): MoviesInteractor{
@@ -31,8 +31,8 @@ object Creator {
         )
     }
 
-    fun providePosterController(activity: Activity): PosterController{
-        return PosterController(activity)
+    fun providePosterPresenter(view: PosterView, imageUrl: String): PosterPresenter {
+        return PosterPresenter(view, imageUrl)
     }
 
 }
