@@ -7,8 +7,9 @@ import com.practicum.imdbservice.data.network.RetrofitNetworkClient
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.api.MoviesRepository
 import com.practicum.imdbservice.domain.impl.MoviesInteractorImpl
-import com.practicum.imdbservice.presentation.MoviesSearchController
+import com.practicum.imdbservice.presentation.movies.MoviesSearchPresenter
 import com.practicum.imdbservice.presentation.PosterController
+import com.practicum.imdbservice.presentation.movies.MoviesView
 import com.practicum.imdbservice.ui.movies.MoviesAdapter
 
 object Creator {
@@ -20,8 +21,16 @@ object Creator {
         return MoviesRepositoryImpl(RetrofitNetworkClient(context))
     }
 
-    fun provideMoviesSearchController(activity: Activity, adapter: MoviesAdapter): MoviesSearchController {
-        return  MoviesSearchController(activity, adapter)
+    fun provideMoviesSearchPresenter(
+        moviesView: MoviesView,
+        context: Context,
+        adapter: MoviesAdapter,
+    ): MoviesSearchPresenter {
+        return  MoviesSearchPresenter(
+            view = moviesView,
+            context = context,
+            adapter = adapter,
+        )
     }
 
     fun providePosterController(activity: Activity): PosterController{
