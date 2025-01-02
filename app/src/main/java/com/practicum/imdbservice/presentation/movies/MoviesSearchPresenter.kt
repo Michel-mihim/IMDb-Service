@@ -22,7 +22,6 @@ import com.practicum.imdbservice.ui.movies.MoviesAdapter
 class MoviesSearchPresenter(
     private val view: MoviesView,
     private val context: Context,
-    private val adapter: MoviesAdapter,
 
 ) {
     private val moviesInteractor = Creator.provideMoviesInteractor(context)
@@ -39,10 +38,6 @@ class MoviesSearchPresenter(
     private val searchRunnable = Runnable {
         val newSearchText = lastSearchText ?: ""
         searchRequest(newSearchText)
-    }
-
-    fun onCreate() {
-        adapter.movies = movies
     }
 
     fun searchDebounce(changedText: String) {
@@ -66,7 +61,7 @@ class MoviesSearchPresenter(
                             if (foundMovies != null) {
                                 movies.clear()
                                 movies.addAll(foundMovies)
-                                adapter.notifyDataSetChanged()
+                                view.updateMoviesList(movies)
                                 view.showMoviesList(true)
 
                             }
@@ -88,7 +83,7 @@ class MoviesSearchPresenter(
         if (text.isNotEmpty()) {
             view.showPlaceholderMessage(true)
             movies.clear()
-            adapter.notifyDataSetChanged()
+            view.updateMoviesList(movies)
 
             view.changePlaceholderText(text)
 
