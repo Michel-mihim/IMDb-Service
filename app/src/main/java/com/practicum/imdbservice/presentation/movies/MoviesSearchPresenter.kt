@@ -25,6 +25,9 @@ class MoviesSearchPresenter(
 
 ) {
     private var view: MoviesView? = null
+    private var state: MoviesState? = null
+    private var latestSearchText: String? = null
+
     private val moviesInteractor = Creator.provideMoviesInteractor(context)
     private val handler = Handler(Looper.getMainLooper())
 
@@ -43,6 +46,7 @@ class MoviesSearchPresenter(
 
     fun attachView(view: MoviesView) {
         this.view = view
+        state?.let { view.render(it) }
     }
 
     fun detachView() {
@@ -50,14 +54,19 @@ class MoviesSearchPresenter(
     }
 
     fun searchDebounce(changedText: String) {
+        if (latestSearchText == changedText) {
+            return
+        }
+
         this.lastSearchText = changedText
+        this.latestSearchText = changedText
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
-            view?.render(
+            renderState(
                 MoviesState(
                     movies = movies,
                     isLoading = true,
@@ -77,7 +86,7 @@ class MoviesSearchPresenter(
 
                             when {
                                 errorMessage != null -> {
-                                    view?.render(
+                                    renderState(
                                         MoviesState(
                                             movies = emptyList(),
                                             isLoading = false,
@@ -89,7 +98,7 @@ class MoviesSearchPresenter(
                                 }
 
                                 movies.isEmpty() -> {
-                                    view?.render(
+                                    renderState(
                                         MoviesState(
                                             movies = emptyList(),
                                             isLoading = false,
@@ -99,7 +108,7 @@ class MoviesSearchPresenter(
                                 }
 
                                 else -> {
-                                    view?.render(
+                                    renderState(
                                         MoviesState(
                                             movies = movies,
                                             isLoading = false,
@@ -115,6 +124,10 @@ class MoviesSearchPresenter(
         }
     }
 
+    private fun renderState(state: MoviesState) {
+        this.state = state
+        this.view?.render(state)
+    }
 
     fun onDestroy() {
         handler.removeCallbacks(searchRunnable)
