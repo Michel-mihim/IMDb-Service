@@ -21,10 +21,10 @@ import com.practicum.imdbservice.ui.movies.MoviesAdapter
 import com.practicum.imdbservice.ui.movies.models.MoviesState
 
 class MoviesSearchPresenter(
-    private val view: MoviesView,
     private val context: Context,
 
 ) {
+    private var view: MoviesView? = null
     private val moviesInteractor = Creator.provideMoviesInteractor(context)
     private val handler = Handler(Looper.getMainLooper())
 
@@ -41,6 +41,14 @@ class MoviesSearchPresenter(
         searchRequest(newSearchText)
     }
 
+    fun attachView(view: MoviesView) {
+        this.view = view
+    }
+
+    fun detachView() {
+        this.view = null
+    }
+
     fun searchDebounce(changedText: String) {
         this.lastSearchText = changedText
         handler.removeCallbacks(searchRunnable)
@@ -49,7 +57,7 @@ class MoviesSearchPresenter(
 
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
-            view.render(
+            view?.render(
                 MoviesState(
                     movies = movies,
                     isLoading = true,
@@ -69,7 +77,7 @@ class MoviesSearchPresenter(
 
                             when {
                                 errorMessage != null -> {
-                                    view.render(
+                                    view?.render(
                                         MoviesState(
                                             movies = emptyList(),
                                             isLoading = false,
@@ -77,11 +85,11 @@ class MoviesSearchPresenter(
                                         )
                                     )
 
-                                    view.showToast(errorMessage)
+                                    view?.showToast(errorMessage)
                                 }
 
                                 movies.isEmpty() -> {
-                                    view.render(
+                                    view?.render(
                                         MoviesState(
                                             movies = emptyList(),
                                             isLoading = false,
@@ -91,7 +99,7 @@ class MoviesSearchPresenter(
                                 }
 
                                 else -> {
-                                    view.render(
+                                    view?.render(
                                         MoviesState(
                                             movies = movies,
                                             isLoading = false,

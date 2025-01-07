@@ -99,11 +99,12 @@ class MoviesActivity : Activity(), MoviesView {
 
         if (moviesSearchPresenter == null) {
             moviesSearchPresenter = Creator.provideMoviesSearchPresenter(
-                moviesView = this,
-                context = this,
+                context = this.applicationContext,
             )
             (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter = moviesSearchPresenter
         }
+
+        moviesSearchPresenter?.attachView(this)
 
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)
@@ -131,8 +132,13 @@ class MoviesActivity : Activity(), MoviesView {
 
     override fun onDestroy() {
         super.onDestroy()
+        moviesSearchPresenter?.detachView()
         textWatcher?.let { queryInput.removeTextChangedListener(it) }
         moviesSearchPresenter?.onDestroy()
+
+        if (isFinishing) {
+            (this.application as? MoviesApplication)?.moviesSearchPresenter = null
+        }
     }
 
     private fun clickDebounce() : Boolean {
