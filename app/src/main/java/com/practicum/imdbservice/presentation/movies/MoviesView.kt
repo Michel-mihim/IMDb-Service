@@ -27,9 +27,8 @@ interface MoviesView {
 
     fun showEmpty(emptyMessage: String)
 
-
-
     fun render(state: MoviesState)
+
 
     fun showToast(message: String)
 }

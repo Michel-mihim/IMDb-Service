@@ -17,9 +17,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.imdbservice.ui.poster.PosterActivity
 import com.practicum.imdbservice.R
 import com.practicum.imdbservice.domain.models.Movie
+import com.practicum.imdbservice.presentation.movies.MoviesSearchPresenter
 import com.practicum.imdbservice.presentation.movies.MoviesView
 import com.practicum.imdbservice.ui.movies.models.MoviesState
 import com.practicum.imdbservice.util.Creator
+import com.practicum.imdbservice.util.MoviesApplication
 
 class MoviesActivity : Activity(), MoviesView {
 
@@ -42,7 +44,7 @@ class MoviesActivity : Activity(), MoviesView {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private val moviesSearchPresenter = Creator.provideMoviesSearchPresenter(this, this)
+    private var moviesSearchPresenter: MoviesSearchPresenter? = null
 
     private lateinit var queryInput: EditText
     private lateinit var placeholderMessage: TextView
@@ -93,6 +95,16 @@ class MoviesActivity : Activity(), MoviesView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movies)
 
+        moviesSearchPresenter = (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter
+
+        if (moviesSearchPresenter == null) {
+            moviesSearchPresenter = Creator.provideMoviesSearchPresenter(
+                moviesView = this,
+                context = this,
+            )
+            (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter = moviesSearchPresenter
+        }
+
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)
         moviesList = findViewById(R.id.locations)
@@ -105,7 +117,7 @@ class MoviesActivity : Activity(), MoviesView {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                moviesSearchPresenter.searchDebounce(
+                moviesSearchPresenter?.searchDebounce(
                     changedText = s?.toString() ?: ""
                 )
             }
@@ -120,7 +132,7 @@ class MoviesActivity : Activity(), MoviesView {
     override fun onDestroy() {
         super.onDestroy()
         textWatcher?.let { queryInput.removeTextChangedListener(it) }
-        moviesSearchPresenter.onDestroy()
+        moviesSearchPresenter?.onDestroy()
     }
 
     private fun clickDebounce() : Boolean {
