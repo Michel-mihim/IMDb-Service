@@ -18,6 +18,7 @@ import com.practicum.imdbservice.ui.poster.PosterActivity
 import com.practicum.imdbservice.R
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.presentation.movies.MoviesView
+import com.practicum.imdbservice.ui.movies.models.MoviesState
 import com.practicum.imdbservice.util.Creator
 
 class MoviesActivity : Activity(), MoviesView {
@@ -47,6 +48,14 @@ class MoviesActivity : Activity(), MoviesView {
     private lateinit var placeholderMessage: TextView
     private lateinit var moviesList: RecyclerView
     private lateinit var progressBar: ProgressBar
+
+    override fun render(state: MoviesState) {
+        when {
+            state.isLoading -> showLoading()
+            state.errorMessage != null -> showError(state.errorMessage)
+            else -> showContent(state.movies)
+        }
+    }
 
     override fun showLoading() {
         moviesList.visibility = View.GONE

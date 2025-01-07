@@ -18,6 +18,7 @@ import com.practicum.imdbservice.util.Creator
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.ui.movies.MoviesAdapter
+import com.practicum.imdbservice.ui.movies.models.MoviesState
 
 class MoviesSearchPresenter(
     private val view: MoviesView,
@@ -48,7 +49,13 @@ class MoviesSearchPresenter(
 
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
-            view.showLoading()
+            view.render(
+                MoviesState(
+                    movies = movies,
+                    isLoading = true,
+                    errorMessage = null,
+                )
+            )
 
             moviesInteractor.searchMovies(
                 newSearchText,
@@ -62,12 +69,35 @@ class MoviesSearchPresenter(
 
                             when {
                                 errorMessage != null -> {
-                                    view.showError(context.getString(R.string.something_went_wrong))
+                                    view.render(
+                                        MoviesState(
+                                            movies = emptyList(),
+                                            isLoading = false,
+                                            errorMessage = context.getString(R.string.something_went_wrong),
+                                        )
+                                    )
+
                                     view.showToast(errorMessage)
                                 }
 
+                                movies.isEmpty() -> {
+                                    view.render(
+                                        MoviesState(
+                                            movies = emptyList(),
+                                            isLoading = false,
+                                            errorMessage = context.getString(R.string.nothing_found),
+                                        )
+                                    )
+                                }
+
                                 else -> {
-                                    view.showContent(movies)
+                                    view.render(
+                                        MoviesState(
+                                            movies = movies,
+                                            isLoading = false,
+                                            errorMessage = null
+                                        )
+                                    )
                                 }
                             }
                         }

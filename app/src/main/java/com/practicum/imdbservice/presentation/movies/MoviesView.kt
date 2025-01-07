@@ -1,6 +1,7 @@
 package com.practicum.imdbservice.presentation.movies
 
 import com.practicum.imdbservice.domain.models.Movie
+import com.practicum.imdbservice.ui.movies.models.MoviesState
 
 interface MoviesView {
 
@@ -17,6 +18,7 @@ interface MoviesView {
 
      */
 
+
     fun showLoading()
 
     fun showContent(movies: List<Movie>)
@@ -24,6 +26,10 @@ interface MoviesView {
     fun showError(errorMessage: String)
 
     fun showEmpty(emptyMessage: String)
+
+
+
+    fun render(state: MoviesState)
 
     fun showToast(message: String)
 }
