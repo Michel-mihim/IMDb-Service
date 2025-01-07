@@ -23,12 +23,25 @@ import com.practicum.imdbservice.presentation.movies.MoviesView
 import com.practicum.imdbservice.ui.movies.models.MoviesState
 import com.practicum.imdbservice.util.Creator
 import com.practicum.imdbservice.util.MoviesApplication
+import moxy.MvpActivity
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
-class MoviesActivity : Activity(), MoviesView {
+class MoviesActivity : MvpActivity(), MoviesView {
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
 
+    }
+
+    @InjectPresenter
+    lateinit var moviesSearchPresenter: MoviesSearchPresenter
+
+    @ProvidePresenter
+    fun providePresenter(): MoviesSearchPresenter {
+        return Creator.provideMoviesSearchPresenter(
+            context = this.applicationContext,
+        )
     }
 
     private val adapter = MoviesAdapter {
@@ -45,7 +58,7 @@ class MoviesActivity : Activity(), MoviesView {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private var moviesSearchPresenter: MoviesSearchPresenter? = null
+
 
     private lateinit var queryInput: EditText
     private lateinit var placeholderMessage: TextView
@@ -53,7 +66,6 @@ class MoviesActivity : Activity(), MoviesView {
     private lateinit var progressBar: ProgressBar
 
     override fun render(state: MoviesState) {
-        Log.d("wtf", state.toString())
         when {
             state.isLoading -> showLoading()
             state.errorMessage != null -> showError(state.errorMessage)
@@ -97,15 +109,6 @@ class MoviesActivity : Activity(), MoviesView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movies)
 
-        moviesSearchPresenter = (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter
-
-        if (moviesSearchPresenter == null) {
-            moviesSearchPresenter = Creator.provideMoviesSearchPresenter(
-                context = this.applicationContext,
-            )
-            (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter = moviesSearchPresenter
-        }
-
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)
         moviesList = findViewById(R.id.locations)
@@ -118,49 +121,21 @@ class MoviesActivity : Activity(), MoviesView {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                moviesSearchPresenter?.searchDebounce(
+                moviesSearchPresenter.searchDebounce(
                     changedText = s?.toString() ?: ""
                 )
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
-
         textWatcher?.let { queryInput.addTextChangedListener(it) }
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        moviesSearchPresenter?.attachView(this)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        moviesSearchPresenter?.attachView(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        moviesSearchPresenter?.detachView()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        moviesSearchPresenter?.detachView()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        moviesSearchPresenter?.detachView()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
         textWatcher?.let { queryInput.removeTextChangedListener(it) }
-        moviesSearchPresenter?.detachView()
-        moviesSearchPresenter?.onDestroy()
+        moviesSearchPresenter.onDestroy()
 
         if (isFinishing) {
             (this.application as? MoviesApplication)?.moviesSearchPresenter = null

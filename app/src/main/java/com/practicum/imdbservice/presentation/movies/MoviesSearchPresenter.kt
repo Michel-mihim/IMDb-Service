@@ -20,13 +20,13 @@ import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.ui.movies.MoviesAdapter
 import com.practicum.imdbservice.ui.movies.models.MoviesState
+import moxy.MvpPresenter
 
 class MoviesSearchPresenter(
     private val context: Context,
 
-) {
-    private var view: MoviesView? = null
-    private var state: MoviesState? = null
+): MvpPresenter<MoviesView>() {
+
     private var latestSearchText: String? = null
 
     private val moviesInteractor = Creator.provideMoviesInteractor(context)
@@ -43,15 +43,6 @@ class MoviesSearchPresenter(
     private val searchRunnable = Runnable {
         val newSearchText = lastSearchText ?: ""
         searchRequest(newSearchText)
-    }
-
-    fun attachView(view: MoviesView) {
-        this.view = view
-        state?.let { view.render(it) }
-    }
-
-    fun detachView() {
-        this.view = null
     }
 
     fun searchDebounce(changedText: String) {
@@ -95,7 +86,7 @@ class MoviesSearchPresenter(
                                         )
                                     )
 
-                                    view?.showToast(errorMessage)
+                                    viewState.showToast(errorMessage)
                                 }
 
                                 movies.isEmpty() -> {
@@ -126,11 +117,10 @@ class MoviesSearchPresenter(
     }
 
     private fun renderState(state: MoviesState) {
-        this.state = state
-        this.view?.render(state)
+        viewState.render(state)
     }
 
-    fun onDestroy() {
+    override fun onDestroy() {
         handler.removeCallbacks(searchRunnable)
     }
 }

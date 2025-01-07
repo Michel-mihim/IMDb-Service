@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("kotlin-kapt")
 }
 
 android {
@@ -38,6 +39,8 @@ android {
     }
 }
 
+    val moxyVersion = "2.2.2"
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -54,4 +57,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation("com.github.moxy-community:moxy:$moxyVersion")
+    implementation("com.github.moxy-community:moxy-android:$moxyVersion")
+    kapt("com.github.moxy-community:moxy-compiler:$moxyVersion")
 }
