@@ -4,6 +4,7 @@ import com.practicum.imdbservice.domain.models.Movie
 
 interface MoviesView {
 
+    /*
     fun showPlaceholderMessage(isVisible: Boolean)
 
     fun showMoviesList(isVisible: Boolean)
@@ -14,5 +15,15 @@ interface MoviesView {
 
     fun updateMoviesList(newMoviesList: List<Movie>)
 
-    fun showMessage(message: String)
+     */
+
+    fun showLoading()
+
+    fun showContent(movies: List<Movie>)
+
+    fun showError(errorMessage: String)
+
+    fun showEmpty(emptyMessage: String)
+
+    fun showToast(message: String)
 }
