@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -52,6 +53,7 @@ class MoviesActivity : Activity(), MoviesView {
     private lateinit var progressBar: ProgressBar
 
     override fun render(state: MoviesState) {
+        Log.d("wtf", state.toString())
         when {
             state.isLoading -> showLoading()
             state.errorMessage != null -> showError(state.errorMessage)
@@ -104,8 +106,6 @@ class MoviesActivity : Activity(), MoviesView {
             (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter = moviesSearchPresenter
         }
 
-        moviesSearchPresenter?.attachView(this)
-
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)
         moviesList = findViewById(R.id.locations)
@@ -130,10 +130,36 @@ class MoviesActivity : Activity(), MoviesView {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        moviesSearchPresenter?.attachView(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        moviesSearchPresenter?.attachView(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        moviesSearchPresenter?.detachView()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        moviesSearchPresenter?.detachView()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        moviesSearchPresenter?.detachView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        moviesSearchPresenter?.detachView()
+
         textWatcher?.let { queryInput.removeTextChangedListener(it) }
+        moviesSearchPresenter?.detachView()
         moviesSearchPresenter?.onDestroy()
 
         if (isFinishing) {
