@@ -8,17 +8,27 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.practicum.imdbservice.R
 import com.practicum.imdbservice.util.Creator
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.ui.movies.models.MoviesState
 import com.practicum.imdbservice.util.SingleLiveEvent
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 
 class MoviesSearchViewModel(application: Application): AndroidViewModel(application) {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
+
+        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                MoviesSearchViewModel(this[APPLICATION_KEY] as Application)
+            }
+        }
     }
 
     private val moviesInteractor = Creator.provideMoviesInteractor(getApplication<Application>())
@@ -32,7 +42,7 @@ class MoviesSearchViewModel(application: Application): AndroidViewModel(applicat
     private val toastState = SingleLiveEvent<String>()
     fun observeToastState(): LiveData<String> = toastState
 
-    override fun onDestroy() {
+    override fun onCleared() {
         handler.removeCallbacks(searchRunnable)
     }
 
@@ -76,7 +86,7 @@ class MoviesSearchViewModel(application: Application): AndroidViewModel(applicat
                         }
 
                         when {
-                            errorMessage != null -> {
+                            errorMessage != null -> {//error
                                 renderState(
                                     MoviesState(
                                         movies = emptyList(),
@@ -85,7 +95,7 @@ class MoviesSearchViewModel(application: Application): AndroidViewModel(applicat
                                     )
                                 )
 
-                                viewState.showToast(errorMessage)
+                                showToast(errorMessage)
                             }
 
                             movies.isEmpty() -> {
