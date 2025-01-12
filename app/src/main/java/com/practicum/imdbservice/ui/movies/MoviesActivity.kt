@@ -129,6 +129,7 @@ class MoviesActivity : MvpActivity(), MoviesView {
             override fun afterTextChanged(s: Editable?) {}
         }
         textWatcher?.let { queryInput.addTextChangedListener(it) }
+
     }
 
     override fun onDestroy() {
