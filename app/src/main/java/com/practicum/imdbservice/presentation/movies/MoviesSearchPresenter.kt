@@ -27,12 +27,10 @@ class MoviesSearchPresenter(
 
 ): MvpPresenter<MoviesView>() {
 
-    private var latestSearchText: String? = null
+    private var lastSearchText: String? = null
 
     private val moviesInteractor = Creator.provideMoviesInteractor(context)
     private val handler = Handler(Looper.getMainLooper())
-
-    private var lastSearchText: String? = null
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
@@ -46,12 +44,12 @@ class MoviesSearchPresenter(
     }
 
     fun searchDebounce(changedText: String) {
-        if (latestSearchText == changedText) {
+        if (lastSearchText == changedText) {
             return
         }
 
         this.lastSearchText = changedText
-        this.latestSearchText = changedText
+
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
