@@ -13,12 +13,13 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.imdbservice.ui.poster.PosterActivity
 import com.practicum.imdbservice.R
 import com.practicum.imdbservice.domain.models.Movie
-import com.practicum.imdbservice.presentation.movies.MoviesSearchPresenter
+import com.practicum.imdbservice.presentation.movies.MoviesSearchViewModel
 import com.practicum.imdbservice.presentation.movies.MoviesView
 import com.practicum.imdbservice.ui.movies.models.MoviesState
 import com.practicum.imdbservice.util.Creator
@@ -27,22 +28,14 @@ import moxy.MvpActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
-class MoviesActivity : MvpActivity(), MoviesView {
+class MoviesActivity : ComponentActivity() {
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
 
     }
 
-    @InjectPresenter
-    lateinit var moviesSearchPresenter: MoviesSearchPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): MoviesSearchPresenter {
-        return Creator.provideMoviesSearchPresenter(
-            context = this.applicationContext,
-        )
-    }
+    private lateinit var viewModel: MoviesSearchViewModel
 
     private val adapter = MoviesAdapter {
         if (clickDebounce()) {
@@ -108,6 +101,14 @@ class MoviesActivity : MvpActivity(), MoviesView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movies)
+
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
+
+        viewModel.observeToastState().observe(this) {
+            showToast(it)
+        }
 
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)

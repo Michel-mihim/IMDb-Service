@@ -58,6 +58,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.activity:activity-ktx:1.6.1")
+
     implementation("com.github.moxy-community:moxy:$moxyVersion")
     implementation("com.github.moxy-community:moxy-android:$moxyVersion")
     kapt("com.github.moxy-community:moxy-compiler:$moxyVersion")
