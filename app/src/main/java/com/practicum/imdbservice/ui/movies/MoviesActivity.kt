@@ -54,7 +54,7 @@ class MoviesActivity : MvpActivity(), MoviesView {
 
     private var isClickAllowed = true
 
-    private var textWatcher: TextWatcher? = null
+    private lateinit var textWatcher: TextWatcher
 
     private val handler = Handler(Looper.getMainLooper())
 
