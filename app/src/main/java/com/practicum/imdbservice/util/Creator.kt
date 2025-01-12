@@ -1,6 +1,5 @@
 package com.practicum.imdbservice.util
 
-import android.app.Activity
 import android.content.Context
 import com.practicum.imdbservice.data.MoviesRepositoryImpl
 import com.practicum.imdbservice.data.network.RetrofitNetworkClient
@@ -8,7 +7,6 @@ import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.api.MoviesRepository
 import com.practicum.imdbservice.domain.impl.MoviesInteractorImpl
 import com.practicum.imdbservice.presentation.poster.PosterPresenter
-import com.practicum.imdbservice.presentation.movies.MoviesView
 import com.practicum.imdbservice.presentation.poster.PosterView
 
 object Creator {

@@ -1,13 +1,11 @@
 package com.practicum.imdbservice.ui.movies
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -21,13 +19,7 @@ import com.practicum.imdbservice.ui.poster.PosterActivity
 import com.practicum.imdbservice.R
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.presentation.movies.MoviesSearchViewModel
-import com.practicum.imdbservice.presentation.movies.MoviesView
 import com.practicum.imdbservice.ui.movies.models.MoviesState
-import com.practicum.imdbservice.util.Creator
-import com.practicum.imdbservice.util.MoviesApplication
-import moxy.MvpActivity
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 class MoviesActivity : ComponentActivity() {
 
@@ -114,10 +106,6 @@ class MoviesActivity : ComponentActivity() {
         progressBar.visibility = View.GONE
 
         placeholderMessage.text = errorMessage
-    }
-
-    fun showEmpty(emptyMessage: String) {
-        showError(emptyMessage)
     }
 
     fun showContent(movies: List<Movie>) {
