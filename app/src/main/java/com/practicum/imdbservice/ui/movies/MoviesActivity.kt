@@ -106,8 +106,8 @@ class MoviesActivity : ComponentActivity() {
             render(it)
         }
 
-        viewModel.observeToastState().observe(this) {
-            showToast(it)
+        viewModel.observeToastState().observe(this) { toast ->
+            showToast(toast)
         }
 
         placeholderMessage = findViewById(R.id.placeholderMessage)

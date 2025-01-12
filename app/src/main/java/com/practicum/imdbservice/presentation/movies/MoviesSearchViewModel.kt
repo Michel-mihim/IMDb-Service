@@ -13,6 +13,7 @@ import com.practicum.imdbservice.util.Creator
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.ui.movies.models.MoviesState
+import com.practicum.imdbservice.util.SingleLiveEvent
 
 class MoviesSearchViewModel(application: Application): AndroidViewModel(application) {
 
@@ -28,7 +29,7 @@ class MoviesSearchViewModel(application: Application): AndroidViewModel(applicat
     private val stateLiveData = MutableLiveData<MoviesState>()
     fun observeState(): LiveData<MoviesState> = stateLiveData
 
-    private val toastState = MutableLiveData<String>()
+    private val toastState = SingleLiveEvent<String>()
     fun observeToastState(): LiveData<String> = toastState
 
     override fun onDestroy() {
