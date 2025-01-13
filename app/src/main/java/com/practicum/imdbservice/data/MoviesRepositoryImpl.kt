@@ -4,11 +4,15 @@ import android.util.Log
 import com.practicum.imdbservice.data.dto.MoviesSearchRequest
 import com.practicum.imdbservice.data.dto.MoviesSearchResponse
 import com.practicum.imdbservice.data.dto.Response
+import com.practicum.imdbservice.data.localStorage.LocalStorage
 import com.practicum.imdbservice.domain.api.MoviesRepository
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.util.Resourse
 
-class MoviesRepositoryImpl(private val networkClient: NetworkClient): MoviesRepository {
+class MoviesRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val localStorage: LocalStorage
+): MoviesRepository {
     override fun searchMovies(expression: String): Resourse<List<Movie>> {
         val response = networkClient.doRequest(MoviesSearchRequest(expression))
 
@@ -18,8 +22,16 @@ class MoviesRepositoryImpl(private val networkClient: NetworkClient): MoviesRepo
             }
 
             200 -> {
+                val stored = localStorage.getSavedFavorites()
+
                 Resourse.Success((response as MoviesSearchResponse).results.map {
-                    Movie(it.id, it.resultType, it.image, it.title, it.description) })
+                    Movie(
+                        id = it.id,
+                        resultType = it.resultType,
+                        image = it.image,
+                        title = it.title,
+                        description = it.description,
+                        inFavorite = stored.contains(it.id)) })
             }
 
             else -> {
@@ -27,5 +39,13 @@ class MoviesRepositoryImpl(private val networkClient: NetworkClient): MoviesRepo
             }
         }
 
+    }
+
+    override fun addMovieToFavorites(movie: Movie) {
+        localStorage.addToFavorites(movie.id)
+    }
+
+    override fun removeMovieFromFavorites(movie: Movie) {
+        localStorage.removeFromFavorites(movie.id)
     }
 }

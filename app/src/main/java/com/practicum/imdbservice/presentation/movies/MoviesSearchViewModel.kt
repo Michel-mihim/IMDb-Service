@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -37,13 +38,55 @@ class MoviesSearchViewModel(application: Application): AndroidViewModel(applicat
     private var latestSearchText: String? = null
 
     private val stateLiveData = MutableLiveData<MoviesState>()
-    fun observeState(): LiveData<MoviesState> = stateLiveData
+    fun observeState(): LiveData<MoviesState> = mediatorStateLiveData
 
     private val toastState = SingleLiveEvent<String>()
     fun observeToastState(): LiveData<String> = toastState
 
+    private val mediatorStateLiveData = MediatorLiveData<MoviesState>().also { liveData ->
+        liveData.addSource(stateLiveData) { movieState ->
+            liveData.value = when (movieState) {
+                is MoviesState.Content -> MoviesState.Content(movieState.movies.sortedByDescending { it.inFavorite})
+                is MoviesState.Empty -> movieState
+                is MoviesState.Error -> movieState
+                is MoviesState.Loading -> movieState
+            }
+        }
+
+    }
+
     override fun onCleared() {
         handler.removeCallbacks(searchRunnable)
+    }
+
+    fun toggleFavorite(movie: Movie) {
+        if (movie.inFavorite) {
+            moviesInteractor.removeMovieFromFavorites(movie)
+        } else {
+            moviesInteractor.addMovieToFavorites(movie)
+        }
+
+        updateMovieContent(movie.id, movie.copy(inFavorite = !movie.inFavorite))
+    }
+
+    private fun updateMovieContent(movieId: String, newMovie: Movie) {
+        val currentState = stateLiveData.value
+
+        // 2
+        if (currentState is MoviesState.Content) {
+            // 3
+            val movieIndex = currentState.movies.indexOfFirst { it.id == movieId }
+
+            // 4
+            if (movieIndex != -1) {
+                // 5
+                stateLiveData.value = MoviesState.Content(
+                    currentState.movies.toMutableList().also {
+                        it[movieIndex] = newMovie
+                    }
+                )
+            }
+        }
     }
 
     fun searchDebounce(changedText: String) {
@@ -69,11 +112,7 @@ class MoviesSearchViewModel(application: Application): AndroidViewModel(applicat
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
             renderState(
-                MoviesState(
-                    movies = movies,
-                    isLoading = true,
-                    errorMessage = null,
-                )
+                MoviesState.Loading
             )
 
             moviesInteractor.searchMovies(
@@ -88,9 +127,7 @@ class MoviesSearchViewModel(application: Application): AndroidViewModel(applicat
                         when {
                             errorMessage != null -> {//error
                                 renderState(
-                                    MoviesState(
-                                        movies = emptyList(),
-                                        isLoading = false,
+                                    MoviesState.Error(
                                         errorMessage = getApplication<Application>().getString(R.string.something_went_wrong),
                                     )
                                 )
@@ -100,20 +137,16 @@ class MoviesSearchViewModel(application: Application): AndroidViewModel(applicat
 
                             movies.isEmpty() -> {
                                 renderState(
-                                    MoviesState(
-                                        movies = emptyList(),
-                                        isLoading = false,
-                                        errorMessage = getApplication<Application>().getString(R.string.nothing_found),
+                                    MoviesState.Empty(
+                                        message = getApplication<Application>().getString(R.string.nothing_found),
                                     )
                                 )
                             }
 
                             else -> {
                                 renderState(
-                                    MoviesState(
-                                        movies = movies,
-                                        isLoading = false,
-                                        errorMessage = null
+                                    MoviesState.Content(
+                                        movies = movies
                                     )
                                 )
                             }

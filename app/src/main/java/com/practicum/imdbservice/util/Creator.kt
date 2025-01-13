@@ -2,6 +2,7 @@ package com.practicum.imdbservice.util
 
 import android.content.Context
 import com.practicum.imdbservice.data.MoviesRepositoryImpl
+import com.practicum.imdbservice.data.localStorage.LocalStorage
 import com.practicum.imdbservice.data.network.RetrofitNetworkClient
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.api.MoviesRepository
@@ -15,7 +16,10 @@ object Creator {
     }
 
     private fun provideMoviesRepository(context: Context): MoviesRepository{
-        return MoviesRepositoryImpl(RetrofitNetworkClient(context))
+        return MoviesRepositoryImpl(
+            RetrofitNetworkClient(context),
+            LocalStorage(context.getSharedPreferences("local_storage", Context.MODE_PRIVATE))
+        )
     }
 
     fun providePosterPresenter(view: PosterView, imageUrl: String): PosterPresenter {

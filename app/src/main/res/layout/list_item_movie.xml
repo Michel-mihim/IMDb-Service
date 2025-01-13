@@ -33,5 +33,10 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="italic"/>
+
+        <ImageView
+            android:id="@+id/favorite"
+            android:layout_width="45dp"
+            android:layout_height="45dp" />
     </LinearLayout>
 </LinearLayout>

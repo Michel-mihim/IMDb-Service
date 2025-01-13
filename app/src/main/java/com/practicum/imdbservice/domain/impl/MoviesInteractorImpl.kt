@@ -2,6 +2,7 @@ package com.practicum.imdbservice.domain.impl
 
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.api.MoviesRepository
+import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.util.Resourse
 import java.util.concurrent.Executors
 
@@ -17,5 +18,13 @@ class MoviesInteractorImpl(private val repository: MoviesRepository): MoviesInte
             }
 
         }
+    }
+
+    override fun addMovieToFavorites(movie: Movie) {
+        repository.addMovieToFavorites(movie)
+    }
+
+    override fun removeMovieFromFavorites(movie: Movie) {
+        repository.removeMovieFromFavorites(movie)
     }
 }

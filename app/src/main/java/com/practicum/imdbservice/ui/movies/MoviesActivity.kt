@@ -30,13 +30,21 @@ class MoviesActivity : ComponentActivity() {
 
     private lateinit var viewModel: MoviesSearchViewModel
 
-    private val adapter = MoviesAdapter {
-        if (clickDebounce()) {
-            val intent = Intent(this, PosterActivity::class.java)
-            intent.putExtra("poster", it.image)
-            startActivity(intent)
+    private val adapter = MoviesAdapter(
+        object  : MoviesAdapter.MovieClickListener {
+            override fun onMovieClick(movie: Movie) {
+                if (clickDebounce()) {
+                    val intent = Intent(this@MoviesActivity, PosterActivity::class.java)
+                    intent.putExtra("poster", movie.image)
+                    startActivity(intent)
+                }
+            }
+
+            override fun onFavoriteToggleClick(movie: Movie) {
+                viewModel.toggleFavorite(movie)
+            }
         }
-    }
+    )
 
     private var isClickAllowed = true
 
@@ -87,10 +95,11 @@ class MoviesActivity : ComponentActivity() {
     }
 
     fun render(state: MoviesState) {
-        when {
-            state.isLoading -> showLoading()
-            state.errorMessage != null -> showError(state.errorMessage)
-            else -> showContent(state.movies)
+        when (state) {
+            is MoviesState.Loading -> showLoading()
+            is MoviesState.Content -> showContent(state.movies)
+            is MoviesState.Empty -> showEmpty(state.message)
+            is MoviesState.Error -> showError(state.errorMessage)
         }
     }
 
@@ -98,6 +107,10 @@ class MoviesActivity : ComponentActivity() {
         moviesList.visibility = View.GONE
         placeholderMessage.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
+    }
+
+    private fun showEmpty(emptyMessage: String) {
+        showError(emptyMessage)
     }
 
     fun showError(errorMessage: String) {
