@@ -18,6 +18,8 @@ class DetailsActivity : AppCompatActivity() {
         binding = ActivityDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        Log.d("wtf", "passed")
+
         val poster = intent.getStringExtra("poster") ?: ""
         val movieId = intent.getStringExtra("id") ?: ""
 
