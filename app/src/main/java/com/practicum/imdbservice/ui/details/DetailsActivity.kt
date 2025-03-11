@@ -1,6 +1,7 @@
 package com.practicum.imdbservice.ui.details
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.imdbservice.databinding.ActivityDetailsBinding
@@ -19,6 +20,8 @@ class DetailsActivity : AppCompatActivity() {
 
         val poster = intent.getStringExtra("poster") ?: ""
         val movieId = intent.getStringExtra("id") ?: ""
+
+        Log.d("wtf", poster.toString() + " " + movieId.toString())
 
         binding.viewPager.adapter = DetailsViewPagerAdapter(
             fragmentManager = supportFragmentManager,

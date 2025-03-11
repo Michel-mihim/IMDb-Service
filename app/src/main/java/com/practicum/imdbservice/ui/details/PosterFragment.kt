@@ -23,7 +23,7 @@ class PosterFragment: Fragment() {
         }
     }
 
-    private val posterViewModel: PosterViewModel by viewModel {
+    private val posterViewModel by viewModel<PosterViewModel> {
         parametersOf(requireArguments().getString(POSTER_URL))
     }
 
