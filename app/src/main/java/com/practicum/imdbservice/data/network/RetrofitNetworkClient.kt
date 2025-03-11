@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.practicum.imdbservice.data.NetworkClient
+import com.practicum.imdbservice.data.dto.MovieDetailsRequest
 import com.practicum.imdbservice.data.dto.MoviesSearchRequest
 import com.practicum.imdbservice.data.dto.Response
 
@@ -18,11 +19,13 @@ class RetrofitNetworkClient(
             return Response().apply { resultCode = -1 }
         }
 
-        if (dto !is MoviesSearchRequest) {
+        if ((dto !is MoviesSearchRequest) && (dto !is MovieDetailsRequest)) {
             return Response().apply { resultCode = 400 }
         }
 
-        val resp = imdbService.searchMovies(dto.expression).execute()
+        val resp = if (dto is MoviesSearchRequest) imdbService.searchMovies(dto.expression).execute()
+        else imdbService.getMovieDetails((dto as MovieDetailsRequest).movieId).execute()
+
         val body = resp.body() ?: Response()
         return body.apply { resultCode = resp.code() }
     }

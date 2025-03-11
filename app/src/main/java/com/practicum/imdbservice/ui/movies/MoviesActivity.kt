@@ -1,5 +1,6 @@
 package com.practicum.imdbservice.ui.movies
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.imdbservice.R
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.presenter.movies.MoviesViewModel
+import com.practicum.imdbservice.ui.details.DetailsActivity
 import com.practicum.imdbservice.ui.movies.models.MoviesState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -38,9 +40,10 @@ class MoviesActivity : AppCompatActivity() {
         object  : MoviesAdapter.MovieClickListener {
             override fun onMovieClick(movie: Movie) {
                 if (clickDebounce()) {
-                    //val intent = Intent(this@MoviesActivity, PosterActivity::class.java)
-                    //intent.putExtra("poster", movie.image)
-                    //startActivity(intent)
+                    val intent = Intent(this@MoviesActivity, DetailsActivity::class.java)
+                    intent.putExtra("poster", movie.image)
+                    intent.putExtra("id", movie.id)
+                    startActivity(intent)
                 }
             }
 

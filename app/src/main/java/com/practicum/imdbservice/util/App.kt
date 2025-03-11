@@ -8,13 +8,13 @@ import com.practicum.imdbservice.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
-class MoviesApplication: Application() {
+class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
 
         startKoin {
-            androidContext(this@MoviesApplication)
+            androidContext(this@App)
             modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
     }

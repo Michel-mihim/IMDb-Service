@@ -3,7 +3,7 @@ package com.practicum.imdbservice.domain.impl
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.api.MoviesRepository
 import com.practicum.imdbservice.domain.models.Movie
-import com.practicum.imdbservice.util.Resourse
+import com.practicum.imdbservice.util.Resource
 import java.util.concurrent.Executors
 
 class MoviesInteractorImpl(
@@ -14,11 +14,20 @@ class MoviesInteractorImpl(
 
     override fun searchMovies(expression: String, consumer: MoviesInteractor.MoviesConsumer) {
         executor.execute{
-            when (val resourse = repository.searchMovies(expression)) {
-                is Resourse.Success -> {consumer.consume(resourse.data, null)}
-                is Resourse.Error -> {consumer.consume(null, resourse.message)}
+            when (val resource = repository.searchMovies(expression)) {
+                is Resource.Success -> {consumer.consume(resource.data, null)}
+                is Resource.Error -> {consumer.consume(resource.data, resource.message)}
             }
 
+        }
+    }
+
+    override fun getMoviesDetails(movieId: String, consumer: MoviesInteractor.MovieDetailsConsumer) {
+        executor.execute {
+            when(val resource = repository.getMovieDetails(movieId)) {
+                is Resource.Success -> { consumer.consume(resource.data, null) }
+                is Resource.Error -> { consumer.consume(resource.data, resource.message) }
+            }
         }
     }
 
