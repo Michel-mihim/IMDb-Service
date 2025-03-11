@@ -1,38 +1,29 @@
-package com.practicum.imdbservice.presentation.movies
+package com.practicum.imdbservice.presenter.movies
 
 import android.app.Application
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.imdbservice.R
-import com.practicum.imdbservice.util.Creator
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.ui.movies.models.MoviesState
 import com.practicum.imdbservice.util.SingleLiveEvent
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 
-class MoviesSearchViewModel(application: Application): AndroidViewModel(application) {
+
+class MoviesViewModel(
+    private val application: Application,
+    private val moviesInteractor: MoviesInteractor
+    ): ViewModel() {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
 
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                MoviesSearchViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
     }
 
-    private val moviesInteractor = Creator.provideMoviesInteractor(getApplication<Application>())
     private val handler = Handler(Looper.getMainLooper())
 
     private var latestSearchText: String? = null
@@ -128,7 +119,7 @@ class MoviesSearchViewModel(application: Application): AndroidViewModel(applicat
                             errorMessage != null -> {//error
                                 renderState(
                                     MoviesState.Error(
-                                        errorMessage = getApplication<Application>().getString(R.string.something_went_wrong),
+                                        errorMessage = application.getString(R.string.something_went_wrong),
                                     )
                                 )
 
@@ -138,7 +129,7 @@ class MoviesSearchViewModel(application: Application): AndroidViewModel(applicat
                             movies.isEmpty() -> {
                                 renderState(
                                     MoviesState.Empty(
-                                        message = getApplication<Application>().getString(R.string.nothing_found),
+                                        message = application.getString(R.string.nothing_found),
                                     )
                                 )
                             }
