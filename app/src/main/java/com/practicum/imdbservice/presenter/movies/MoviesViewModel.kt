@@ -34,6 +34,7 @@ class MoviesViewModel(
     private val toastState = SingleLiveEvent<String>()
     fun observeToastState(): LiveData<String> = toastState
 
+
     private val mediatorStateLiveData = MediatorLiveData<MoviesState>().also { liveData ->
         liveData.addSource(stateLiveData) { movieState ->
             liveData.value = when (movieState) {
@@ -46,9 +47,12 @@ class MoviesViewModel(
 
     }
 
+
+
     override fun onCleared() {
         handler.removeCallbacks(searchRunnable)
     }
+
 
     fun toggleFavorite(movie: Movie) {
         if (movie.inFavorite) {
@@ -59,6 +63,9 @@ class MoviesViewModel(
 
         updateMovieContent(movie.id, movie.copy(inFavorite = !movie.inFavorite))
     }
+
+
+
 
     private fun updateMovieContent(movieId: String, newMovie: Movie) {
         val currentState = stateLiveData.value
@@ -79,6 +86,8 @@ class MoviesViewModel(
             }
         }
     }
+
+
 
     fun searchDebounce(changedText: String) {
         if (latestSearchText == changedText) {
@@ -148,9 +157,12 @@ class MoviesViewModel(
         }
     }
 
+
     private fun renderState(state: MoviesState) {
         stateLiveData.postValue(state)
     }
+
+
 
     fun showToast(message: String) {
         toastState.postValue(message)

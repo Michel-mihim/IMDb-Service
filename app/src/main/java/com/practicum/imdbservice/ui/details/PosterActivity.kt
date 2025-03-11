@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 
 class PosterActivity : AppCompatActivity() {
 
-    private lateinit var poster: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

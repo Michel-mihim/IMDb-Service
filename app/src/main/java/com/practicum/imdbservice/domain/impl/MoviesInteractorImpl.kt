@@ -6,7 +6,9 @@ import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.util.Resourse
 import java.util.concurrent.Executors
 
-class MoviesInteractorImpl(private val repository: MoviesRepository): MoviesInteractor {
+class MoviesInteractorImpl(
+    private val repository: MoviesRepository
+): MoviesInteractor {
 
     private val executor = Executors.newCachedThreadPool()
 

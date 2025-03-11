@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.practicum.imdbservice"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.practicum.imdbservice"
@@ -48,6 +48,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.core:core-ktx:1.9.0")
     implementation("io.insert-koin:koin-android:3.3.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

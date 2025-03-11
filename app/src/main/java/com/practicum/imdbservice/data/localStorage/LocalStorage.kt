@@ -3,6 +3,7 @@ package com.practicum.imdbservice.data.localStorage
 import android.content.SharedPreferences
 
 class LocalStorage(private val sharedPreferences: SharedPreferences) {
+
     private companion object {
         const val FAVORITES_KEY = "FAVORITES_KEY"
     }

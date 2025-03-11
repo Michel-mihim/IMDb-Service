@@ -18,13 +18,11 @@ val dataModule = module {
 
     single<IMDbApiService> {
         val imdbBaseUrl = "https://tv-api.com"
-        Retrofit
-            .Builder()
+        Retrofit.Builder()
             .baseUrl(imdbBaseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(IMDbApiService::class.java)
-
     }
 
     factory<LocalStorage> {

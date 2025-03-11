@@ -7,12 +7,11 @@ import android.net.NetworkCapabilities
 import com.practicum.imdbservice.data.NetworkClient
 import com.practicum.imdbservice.data.dto.MoviesSearchRequest
 import com.practicum.imdbservice.data.dto.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitNetworkClient(
     private val context: Context,
-    private val imdbService: IMDbApiService): NetworkClient {
+    private val imdbService: IMDbApiService
+): NetworkClient {
 
     override fun doRequest(dto: Any): Response {
         if (isConnected() == false) {

@@ -22,6 +22,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesActivity : AppCompatActivity() {
 
+    private lateinit var queryInput: EditText
+    private lateinit var placeholderMessage: TextView
+    private lateinit var moviesList: RecyclerView
+    private lateinit var progressBar: ProgressBar
+
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
 
@@ -51,11 +56,6 @@ class MoviesActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private lateinit var queryInput: EditText
-    private lateinit var placeholderMessage: TextView
-    private lateinit var moviesList: RecyclerView
-    private lateinit var progressBar: ProgressBar
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movies)
@@ -65,14 +65,9 @@ class MoviesActivity : AppCompatActivity() {
         moviesList = findViewById(R.id.locations)
         progressBar = findViewById(R.id.progressBar)
 
-        Log.d("wtf", "1")
-        Log.d("wtf", moviesViewModel.toString())
-
         moviesViewModel.observeState().observe(this) {
             render(it)
         }
-
-        Log.d("wtf", "2")
 
         moviesViewModel.observeToastState().observe(this) { toast ->
             showToast(toast)
