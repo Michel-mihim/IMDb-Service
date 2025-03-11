@@ -60,20 +60,23 @@ class MoviesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movies)
 
-        moviesViewModel.observeState().observe(this) {
-            render(it)
-        }
-
-        Log.d("wtf", "passed")
-
-        moviesViewModel.observeToastState().observe(this) { toast ->
-            showToast(toast)
-        }
-
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)
         moviesList = findViewById(R.id.locations)
         progressBar = findViewById(R.id.progressBar)
+
+        Log.d("wtf", "1")
+        Log.d("wtf", moviesViewModel.toString())
+
+        moviesViewModel.observeState().observe(this) {
+            render(it)
+        }
+
+        Log.d("wtf", "2")
+
+        moviesViewModel.observeToastState().observe(this) { toast ->
+            showToast(toast)
+        }
 
         moviesList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         moviesList.adapter = adapter

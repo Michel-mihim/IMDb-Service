@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 val dataModule = module {
 
     single<NetworkClient> {
-        RetrofitNetworkClient(get(), get())
+        RetrofitNetworkClient(androidContext(), get())
     }
 
     single<IMDbApiService> {
@@ -22,7 +22,8 @@ val dataModule = module {
             .Builder()
             .baseUrl(imdbBaseUrl)
             .addConverterFactory(GsonConverterFactory.create())
-            .build().create(IMDbApiService::class.java)
+            .build()
+            .create(IMDbApiService::class.java)
 
     }
 
@@ -32,6 +33,6 @@ val dataModule = module {
 
     single {
         androidContext().
-        getSharedPreferences("shared_preferences", Context.MODE_PRIVATE)
+        getSharedPreferences("local_storage", Context.MODE_PRIVATE)
     }
 }
