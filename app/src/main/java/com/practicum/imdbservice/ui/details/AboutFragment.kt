@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.practicum.imdbservice.databinding.FragmentAboutBinding
 import com.practicum.imdbservice.domain.models.MovieDetails
@@ -15,13 +16,11 @@ import org.koin.core.parameter.parametersOf
 class AboutFragment : Fragment() {
 
     companion object {
-        private const val MOVIE_ID = "movie_id"
+        private const val MOVIE_ID = "id"
 
         fun newInstance(movieId: String) = AboutFragment().apply {
-            arguments = Bundle().apply {
-                putString(MOVIE_ID, movieId)
+            arguments = bundleOf(MOVIE_ID to movieId)
             }
-        }
     }
 
     private val aboutViewModel by viewModel<AboutViewModel> {

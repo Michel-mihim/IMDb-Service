@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -18,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.imdbservice.R
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.presenter.movies.MoviesViewModel
-import com.practicum.imdbservice.ui.details.DetailsActivity
 import com.practicum.imdbservice.ui.movies.models.MoviesState
+import com.practicum.imdbservice.ui.test.DetailsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesActivity : AppCompatActivity() {
@@ -37,13 +36,13 @@ class MoviesActivity : AppCompatActivity() {
     private val moviesViewModel by viewModel<MoviesViewModel>()
 
     private val adapter = MoviesAdapter(
-        object  : MoviesAdapter.MovieClickListener {
+        object : MoviesAdapter.MovieClickListener {
             override fun onMovieClick(movie: Movie) {
                 if (clickDebounce()) {
-                    val intent = Intent(this@MoviesActivity, DetailsActivity::class.java)
-                    intent.putExtra("poster", movie.image)
-                    intent.putExtra("id", movie.id)
-                    startActivity(intent)
+                    val detailsIntent = Intent(this@MoviesActivity, DetailsActivity::class.java)
+                    detailsIntent.putExtra("poster", movie.image)
+                    detailsIntent.putExtra("id", movie.id)
+                    startActivity(detailsIntent)
                 }
             }
 

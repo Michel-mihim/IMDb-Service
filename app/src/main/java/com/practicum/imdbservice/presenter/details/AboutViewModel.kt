@@ -7,8 +7,10 @@ import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.models.MovieDetails
 import com.practicum.imdbservice.ui.details.models.AboutState
 
-class AboutViewModel(private val movieId: String,
-                     private val moviesInteractor: MoviesInteractor, ) : ViewModel() {
+class AboutViewModel(
+    private val movieId: String,
+    private val moviesInteractor: MoviesInteractor
+) : ViewModel() {
 
     private val stateLiveData = MutableLiveData<AboutState>()
     fun observeState(): LiveData<AboutState> = stateLiveData

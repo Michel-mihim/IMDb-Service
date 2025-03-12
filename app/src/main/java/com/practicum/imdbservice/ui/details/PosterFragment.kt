@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.practicum.imdbservice.databinding.FragmentPosterBinding
@@ -14,14 +15,13 @@ import org.koin.core.parameter.parametersOf
 class PosterFragment: Fragment() {
 
     companion object {
-        private const val POSTER_URL = "poster_url"
+        private const val POSTER_URL = "poster"
 
         fun newInstance(posterUrl: String) = PosterFragment().apply {
-            arguments = Bundle().apply {
-                putString(POSTER_URL, posterUrl)
+            arguments = bundleOf(POSTER_URL to posterUrl)
             }
-        }
     }
+
 
     private val posterViewModel by viewModel<PosterViewModel> {
         parametersOf(requireArguments().getString(POSTER_URL))

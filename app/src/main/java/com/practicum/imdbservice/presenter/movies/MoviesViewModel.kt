@@ -47,8 +47,6 @@ class MoviesViewModel(
 
     }
 
-
-
     override fun onCleared() {
         handler.removeCallbacks(searchRunnable)
     }
@@ -63,8 +61,6 @@ class MoviesViewModel(
 
         updateMovieContent(movie.id, movie.copy(inFavorite = !movie.inFavorite))
     }
-
-
 
 
     private fun updateMovieContent(movieId: String, newMovie: Movie) {
