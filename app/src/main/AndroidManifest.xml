@@ -17,7 +17,7 @@
         android:theme="@style/Theme.IMDbService"
         tools:targetApi="31">
         <activity
-            android:name=".ui.test.DetailsActivity"
+            android:name=".ui.details.DetailsActivity"
             android:exported="false" />
         <activity
             android:name=".ui.details.PosterActivity"

@@ -1,11 +1,10 @@
-package com.practicum.imdbservice.ui.test
+package com.practicum.imdbservice.ui.details
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.imdbservice.R
 import com.practicum.imdbservice.databinding.ActivityDetailsBinding
-import com.practicum.imdbservice.ui.details.DetailsViewPagerAdapter
 
 class DetailsActivity : AppCompatActivity() {
 

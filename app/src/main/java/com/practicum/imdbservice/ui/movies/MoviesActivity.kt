@@ -18,7 +18,7 @@ import com.practicum.imdbservice.R
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.presenter.movies.MoviesViewModel
 import com.practicum.imdbservice.ui.movies.models.MoviesState
-import com.practicum.imdbservice.ui.test.DetailsActivity
+import com.practicum.imdbservice.ui.details.DetailsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesActivity : AppCompatActivity() {
