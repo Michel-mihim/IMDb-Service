@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.practicum.imdbservice.databinding.FragmentAboutBinding
 import com.practicum.imdbservice.domain.models.MovieDetails
 import com.practicum.imdbservice.presenter.details.AboutViewModel
+import com.practicum.imdbservice.ui.cast.MoviesCastActivity
 import com.practicum.imdbservice.ui.details.models.AboutState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -47,6 +48,16 @@ class AboutFragment : Fragment() {
                 is AboutState.Error -> showErrorMessage(it.message)
             }
         }
+
+        binding.showCastButton.setOnClickListener {
+            startActivity(
+                MoviesCastActivity.newInstance(
+                    context = requireContext(),
+                    movieId = requireArguments().getString(MOVIE_ID).orEmpty()
+                )
+            )
+        }
+
     }
 
     private fun showErrorMessage(message: String) {

@@ -5,6 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.movieCast.MoviesCastActivity">
+    tools:context=".ui.cast.MoviesCastActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

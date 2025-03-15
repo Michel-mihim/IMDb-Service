@@ -1,12 +1,15 @@
-package com.practicum.imdbservice.ui.movieCast
+package com.practicum.imdbservice.ui.cast
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.imdbservice.R
+import com.practicum.imdbservice.databinding.ActivityMoviesCastBinding
 
 class MoviesCastActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMoviesCastBinding
 
     companion object {
 
@@ -21,7 +24,9 @@ class MoviesCastActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_movie_cast)
+
+        binding = ActivityMoviesCastBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
     }
 
