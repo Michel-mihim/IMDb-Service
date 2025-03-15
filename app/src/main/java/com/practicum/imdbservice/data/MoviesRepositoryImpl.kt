@@ -1,5 +1,8 @@
 package com.practicum.imdbservice.data
 
+import com.practicum.imdbservice.data.converters.MovieCastConverter
+import com.practicum.imdbservice.data.dto.MovieCastRequest
+import com.practicum.imdbservice.data.dto.MovieCastResponse
 import com.practicum.imdbservice.data.dto.MovieDetailsRequest
 import com.practicum.imdbservice.data.dto.MovieDetailsResponse
 import com.practicum.imdbservice.data.dto.MoviesSearchRequest
@@ -7,12 +10,15 @@ import com.practicum.imdbservice.data.dto.MoviesSearchResponse
 import com.practicum.imdbservice.data.localStorage.LocalStorage
 import com.practicum.imdbservice.domain.api.MoviesRepository
 import com.practicum.imdbservice.domain.models.Movie
+import com.practicum.imdbservice.domain.models.MovieCast
+import com.practicum.imdbservice.domain.models.MovieCastPerson
 import com.practicum.imdbservice.domain.models.MovieDetails
 import com.practicum.imdbservice.util.Resource
 
 class MoviesRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val localStorage: LocalStorage
+    private val localStorage: LocalStorage,
+    private val movieCastConverter: MovieCastConverter
 ): MoviesRepository {
     override fun searchMovies(expression: String): Resource<List<Movie>> {
         val response = networkClient.doRequest(MoviesSearchRequest(expression))
@@ -73,6 +79,25 @@ class MoviesRepositoryImpl(
         }
     }
 
+    override fun getMovieCast(movieId: String): Resource<MovieCast> {
+        val response = networkClient.doRequest(MovieCastRequest(movieId))
+        return when (response.resultCode) {
+            -1 -> {
+                Resource.Error("Проверьте подключение к интернету")
+            }
+            200 -> {
+                // Осталось написать конвертацию!
+                with(response as MovieCastResponse) {
+                    Resource.Success(
+                        data = movieCastConverter.convert(response as MovieCastResponse)
+                    )
+                }
+            }
+            else -> {
+                Resource.Error("Ошибка сервера")
+            }
+        }
+    }
 
     override fun addMovieToFavorites(movie: Movie) {
         localStorage.addToFavorites(movie.id)

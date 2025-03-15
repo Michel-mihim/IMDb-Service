@@ -1,5 +1,6 @@
 package com.practicum.imdbservice.di
 
+import com.practicum.imdbservice.presenter.cast.MoviesCastViewModel
 import com.practicum.imdbservice.presenter.details.AboutViewModel
 import com.practicum.imdbservice.presenter.details.PosterViewModel
 import com.practicum.imdbservice.presenter.movies.MoviesViewModel
@@ -19,5 +20,9 @@ val viewModelModule = module {
 
     viewModel {(posterUrl: String) ->
         PosterViewModel(posterUrl)
+    }
+
+    viewModel { (movieId: String) ->
+        MoviesCastViewModel(movieId, get())
     }
 }
