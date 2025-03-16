@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import com.practicum.imdbservice.databinding.FragmentAboutBinding
 import com.practicum.imdbservice.domain.models.MovieDetails
 import com.practicum.imdbservice.presenter.details.AboutViewModel
-import com.practicum.imdbservice.ui.cast.MoviesCastActivity
+import com.practicum.imdbservice.R
+import com.practicum.imdbservice.ui.cast.MoviesCastFragment
 import com.practicum.imdbservice.ui.details.models.AboutState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -50,12 +52,17 @@ class AboutFragment : Fragment() {
         }
 
         binding.showCastButton.setOnClickListener {
-            startActivity(
-                MoviesCastActivity.newInstance(
-                    context = requireContext(),
-                    movieId = requireArguments().getString(MOVIE_ID).orEmpty()
+            parentFragment?.parentFragmentManager?.commit {
+                replace(
+                    R.id.rootFragmentContainerView,
+                    MoviesCastFragment.newInstance(
+                        movieId = requireArguments().getString(MOVIE_ID).orEmpty()
+                    ),
+                    MoviesCastFragment.TAG
                 )
-            )
+
+                addToBackStack(MoviesCastFragment.TAG)
+            }
         }
 
     }

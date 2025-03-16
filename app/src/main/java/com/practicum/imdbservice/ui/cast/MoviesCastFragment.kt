@@ -3,46 +3,54 @@ package com.practicum.imdbservice.ui.cast
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.practicum.imdbservice.databinding.ActivityMoviesCastBinding
+import com.practicum.imdbservice.databinding.FragmentMoviesCastBinding
 import com.practicum.imdbservice.presenter.cast.MoviesCastViewModel
 import com.practicum.imdbservice.ui.cast.models.MoviesCastState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.getValue
 
-class MoviesCastActivity : AppCompatActivity() {
+class MoviesCastFragment: Fragment() {
 
-    private val moviesCastViewModel: MoviesCastViewModel by viewModel {
-        parametersOf(intent.getStringExtra(ARGS_MOVIE_ID))
-    }
+    lateinit var binding: FragmentMoviesCastBinding
 
     private val adapter = MoviesCastAdapter()
 
-    private lateinit var binding: ActivityMoviesCastBinding
+    private val moviesCastViewModel: MoviesCastViewModel by viewModel {
+        parametersOf(requireArguments().getString(ARGS_MOVIE_ID))
+    }
 
     companion object {
 
         private const val ARGS_MOVIE_ID = "movie_id"
+        const val TAG = "MovieCastFragment"
 
-        fun newInstance(context: Context, movieId: String): Intent {
-            return Intent(context, MoviesCastActivity::class.java).apply {
-                putExtra(ARGS_MOVIE_ID, movieId)
+        fun newInstance(movieId: String): Fragment {
+            return MoviesCastFragment().apply {
+                arguments = bundleOf(ARGS_MOVIE_ID to movieId)
             }
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentMoviesCastBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivityMoviesCastBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.moviesCastRecyclerView.adapter = adapter
-        binding.moviesCastRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.moviesCastRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        moviesCastViewModel.observeState().observe(this) {
+        moviesCastViewModel.observeState().observe(viewLifecycleOwner) {
             // В зависимости от UiState экрана показываем
             // разные состояния экрана
             when (it) {
