@@ -15,14 +15,14 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.imdbservice.R
 import com.practicum.imdbservice.databinding.FragmentMoviesBinding
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.presenter.movies.MoviesViewModel
-import com.practicum.imdbservice.ui.details.DetailsActivity
-import com.practicum.imdbservice.ui.movies.MoviesActivity
+import com.practicum.imdbservice.ui.details.DetailsFragment
 import com.practicum.imdbservice.ui.movies.models.MoviesState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -47,11 +47,18 @@ class MoviesFragment: Fragment() {
         object : MoviesAdapter.MovieClickListener {
             override fun onMovieClick(movie: Movie) {
                 if (clickDebounce()) {
-                    val detailsIntent = Intent(requireContext(), DetailsActivity::class.java)
-                    detailsIntent.putExtra("poster", movie.image)
-                    detailsIntent.putExtra("id", movie.id)
-                    Log.d("wtf", movie.id.toString())
-                    startActivity(detailsIntent)
+                    parentFragmentManager.commit {
+                        replace(
+                            R.id.rootFragmentContainerView,
+                            DetailsFragment.newInstance(
+                                movieId = movie.id,
+                                posterUrl = movie.image
+                            ),
+                            DetailsFragment.TAG
+                        )
+
+                        addToBackStack(DetailsFragment.TAG)
+                    }
                 }
             }
 
