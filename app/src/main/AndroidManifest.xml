@@ -25,17 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.cast.MoviesCastActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.details.DetailsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.movies.MoviesActivity"
-            android:exported="false"
-            android:screenOrientation="fullSensor">
-        </activity>
+
     </application>
 
 </manifest>

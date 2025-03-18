@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.imdbservice.R
@@ -47,18 +48,10 @@ class MoviesFragment: Fragment() {
         object : MoviesAdapter.MovieClickListener {
             override fun onMovieClick(movie: Movie) {
                 if (clickDebounce()) {
-                    parentFragmentManager.commit {
-                        replace(
-                            R.id.rootFragmentContainerView,
-                            DetailsFragment.newInstance(
-                                movieId = movie.id,
-                                posterUrl = movie.image
-                            ),
-                            DetailsFragment.TAG
-                        )
-
-                        addToBackStack(DetailsFragment.TAG)
-                    }
+                    findNavController().navigate(
+                        R.id.action_moviesFragment_to_detailsFragment,
+                        DetailsFragment.createArgs(movie.id, movie.image)
+                    )
                 }
             }
 
