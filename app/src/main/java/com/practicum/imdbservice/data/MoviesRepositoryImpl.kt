@@ -14,35 +14,37 @@ import com.practicum.imdbservice.domain.models.MovieCast
 import com.practicum.imdbservice.domain.models.MovieCastPerson
 import com.practicum.imdbservice.domain.models.MovieDetails
 import com.practicum.imdbservice.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class MoviesRepositoryImpl(
     private val networkClient: NetworkClient,
     private val localStorage: LocalStorage,
     private val movieCastConverter: MovieCastConverter
 ): MoviesRepository {
-    override fun searchMovies(expression: String): Resource<List<Movie>> {
+    override fun searchMovies(expression: String): Flow<Resource<List<Movie>>> = flow {
         val response = networkClient.doRequest(MoviesSearchRequest(expression))
 
-        return when (response.resultCode) {
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error("Проверьте подключение к интернету")
+                emit(Resource.Error("Проверьте подключение к интернету"))
             }
 
             200 -> {
                 val stored = localStorage.getSavedFavorites()
 
-                Resource.Success((response as MoviesSearchResponse).results.map {
+                emit(Resource.Success((response as MoviesSearchResponse).results.map {
                     Movie(
                         id = it.id,
                         resultType = it.resultType,
                         image = it.image,
                         title = it.title,
                         description = it.description,
-                        inFavorite = stored.contains(it.id)) })
+                        inFavorite = stored.contains(it.id)) }))
             }
 
             else -> {
-                Resource.Error("Ошибка сервера")
+                emit(Resource.Error("Ошибка сервера"))
             }
         }
 

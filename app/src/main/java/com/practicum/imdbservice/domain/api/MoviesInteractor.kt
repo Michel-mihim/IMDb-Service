@@ -3,15 +3,19 @@ package com.practicum.imdbservice.domain.api
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.domain.models.MovieCast
 import com.practicum.imdbservice.domain.models.MovieDetails
+import kotlinx.coroutines.flow.Flow
 
 interface MoviesInteractor {
-    fun searchMovies(expression: String, consumer: MoviesConsumer)
+    fun searchMovies(expression: String): Flow<Pair<List<Movie>?, String?>>
     fun getMoviesDetails(movieId: String, consumer: MovieDetailsConsumer)
     fun getMovieCast(movieId: String, consumer: MovieCastConsumer)
 
+    /*
     interface MoviesConsumer{
         fun consume(foundMovies: List<Movie>?, errorMessage: String?)
     }
+
+     */
 
     interface MovieDetailsConsumer {
         fun consume(movieDetails: MovieDetails?, errorMessage: String?)

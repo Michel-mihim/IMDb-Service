@@ -9,13 +9,16 @@ import com.practicum.imdbservice.data.dto.MovieCastRequest
 import com.practicum.imdbservice.data.dto.MovieDetailsRequest
 import com.practicum.imdbservice.data.dto.MoviesSearchRequest
 import com.practicum.imdbservice.data.dto.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(
     private val context: Context,
     private val imdbService: IMDbApiService
 ): NetworkClient {
 
-    override fun doRequest(dto: Any): Response {
+
+    override suspend fun doRequest(dto: Any): Response {
         if (isConnected() == false) {
             return Response().apply { resultCode = -1 }
         }
@@ -28,6 +31,42 @@ class RetrofitNetworkClient(
             return Response().apply { resultCode = 400 }
         }
 
+        return when (dto) {
+            is MoviesSearchRequest -> {
+                withContext(Dispatchers.IO) {
+                    try {
+                        val response = imdbService.searchMovies(dto.expression)
+                        response.apply { resultCode = 200 }
+                    } catch (e: Throwable) {
+                        Response().apply { resultCode = 500 }
+                    }
+                }
+            }
+            is MovieDetailsRequest -> {
+                val response = imdbService.getMovieDetails(dto.movieId).execute()
+
+                val body = response.body()
+
+                return if (body != null) {
+                    body.apply { resultCode = response.code() }
+                } else {
+                    Response().apply { resultCode = response.code() }
+                }
+            }
+            else -> {
+                val response = imdbService.getFullCast((dto as MovieCastRequest).movieId).execute()
+
+                val body = response.body()
+
+                return if (body != null) {
+                    body.apply { resultCode = response.code() }
+                } else {
+                    Response().apply { resultCode = response.code() }
+                }
+            }
+        }
+
+       /*
         val response = when (dto) {
             is MoviesSearchRequest -> imdbService.searchMovies(dto.expression).execute()
             is MovieDetailsRequest -> imdbService.getMovieDetails(dto.movieId).execute()
@@ -35,11 +74,14 @@ class RetrofitNetworkClient(
         }
 
         val body = response.body()
+
         return if (body != null) {
             body.apply { resultCode = response.code() }
         } else {
             Response().apply { resultCode = response.code() }
         }
+
+        */
     }
 
     @SuppressLint("ServiceCast")
