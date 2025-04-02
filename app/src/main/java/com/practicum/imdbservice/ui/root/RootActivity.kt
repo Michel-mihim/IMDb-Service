@@ -21,4 +21,8 @@ class RootActivity : AppCompatActivity() {
 
         setContentView(binding.root)
     }
+
+    fun animateBottomNavigationView() {
+        //binding.
+    }
 }

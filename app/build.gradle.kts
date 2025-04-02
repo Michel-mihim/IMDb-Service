@@ -48,8 +48,11 @@ android {
 
 dependencies {
 
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
     val fragment_version = "1.5.5"
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation("androidx.fragment:fragment-ktx:$fragment_version")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("io.insert-koin:koin-android:3.3.0")

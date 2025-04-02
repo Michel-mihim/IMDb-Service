@@ -3,15 +3,20 @@ package com.practicum.imdbservice.presenter.movies
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.imdbservice.R
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.ui.movies.models.MoviesState
 import com.practicum.imdbservice.util.SingleLiveEvent
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MoviesViewModel(
@@ -24,9 +29,10 @@ class MoviesViewModel(
 
     }
 
-    private val handler = Handler(Looper.getMainLooper())
-
     private var latestSearchText: String? = null
+    private val movies = ArrayList<Movie>()
+
+    private var searchJob: Job? = null
 
     private val stateLiveData = MutableLiveData<MoviesState>()
     fun observeState(): LiveData<MoviesState> = mediatorStateLiveData
@@ -47,10 +53,22 @@ class MoviesViewModel(
 
     }
 
-    override fun onCleared() {
-        handler.removeCallbacks(searchRunnable)
-    }
+    fun searchDebounce(changedText: String) {
+        if (latestSearchText == changedText) {
+            return
+        }
 
+        this.latestSearchText = changedText
+
+        Log.d("wtf", changedText)
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRequest(changedText)
+        }
+
+    }
 
     fun toggleFavorite(movie: Movie) {
         if (movie.inFavorite) {
@@ -82,28 +100,6 @@ class MoviesViewModel(
             }
         }
     }
-
-
-
-    fun searchDebounce(changedText: String) {
-        if (latestSearchText == changedText) {
-            return
-        }
-
-        this.latestSearchText = changedText
-
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }
-
-    private val movies = ArrayList<Movie>()
-
-    private val searchRunnable = Runnable {
-        val newSearchText = latestSearchText ?: ""
-        searchRequest(newSearchText)
-    }
-
-
 
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {

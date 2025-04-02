@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,10 @@ import com.practicum.imdbservice.domain.models.Movie
 import com.practicum.imdbservice.presenter.movies.MoviesViewModel
 import com.practicum.imdbservice.ui.details.DetailsFragment
 import com.practicum.imdbservice.ui.movies.models.MoviesState
+import com.practicum.imdbservice.util.debounce
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
@@ -38,21 +43,18 @@ class MoviesFragment: Fragment() {
     private lateinit var progressBar: ProgressBar
 
     companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val CLICK_DEBOUNCE_DELAY = 300L
 
     }
+
+    private lateinit var onMovieClickDebounce: (Movie) -> Unit
 
     private val moviesViewModel by viewModel<MoviesViewModel>()
 
     private val adapter = MoviesAdapter(
         object : MoviesAdapter.MovieClickListener {
             override fun onMovieClick(movie: Movie) {
-                if (clickDebounce()) {
-                    findNavController().navigate(
-                        R.id.action_moviesFragment_to_detailsFragment,
-                        DetailsFragment.createArgs(movie.id, movie.image)
-                    )
-                }
+                onMovieClickDebounce(movie)
             }
 
             override fun onFavoriteToggleClick(movie: Movie) {
@@ -63,9 +65,9 @@ class MoviesFragment: Fragment() {
 
     private var isClickAllowed = true
 
-    private lateinit var textWatcher: TextWatcher
+    private var clickJob: Job? = null
 
-    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var textWatcher: TextWatcher
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMoviesBinding.inflate(inflater, container, false)
@@ -79,6 +81,17 @@ class MoviesFragment: Fragment() {
         queryInput = binding.queryInput
         moviesList = binding.locations
         progressBar = binding.progressBar
+
+        onMovieClickDebounce = debounce(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+            ) { movie ->
+            findNavController().navigate(
+                R.id.action_moviesFragment_to_detailsFragment,
+                DetailsFragment.createArgs(movie.id, movie.image)
+            )
+        }
 
         moviesViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
@@ -155,9 +168,17 @@ class MoviesFragment: Fragment() {
 
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
+        Log.d("wtf", "debouncer entered, allowed=="+isClickAllowed.toString())
+
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            Log.d("wtf", "debouncer set to FALSE")
+
+            clickJob = viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+                Log.d("wtf", "debouncer set to TRUE")
+            }
         }
         return current
     }
