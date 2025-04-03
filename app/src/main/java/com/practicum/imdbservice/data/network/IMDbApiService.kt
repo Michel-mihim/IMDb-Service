@@ -12,7 +12,7 @@ interface IMDbApiService {
     suspend fun searchMovies(@Path("expression") expression: String): MoviesSearchResponse
 
     @GET("/en/API/Title/k_zcuw1ytf/{movie_id}")
-    fun getMovieDetails(@Path("movie_id") movieId: String): Call<MovieDetailsResponse>
+    suspend fun getMovieDetails(@Path("movie_id") movieId: String): MovieDetailsResponse
 
     @GET("/en/API/FullCast/k_zcuw1ytf/{movie_id}")
     fun getFullCast(@Path("movie_id") movieId: String): Call<MovieCastResponse>

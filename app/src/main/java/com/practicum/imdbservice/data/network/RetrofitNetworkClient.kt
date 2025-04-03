@@ -43,14 +43,13 @@ class RetrofitNetworkClient(
                 }
             }
             is MovieDetailsRequest -> {
-                val response = imdbService.getMovieDetails(dto.movieId).execute()
-
-                val body = response.body()
-
-                return if (body != null) {
-                    body.apply { resultCode = response.code() }
-                } else {
-                    Response().apply { resultCode = response.code() }
+                withContext(Dispatchers.IO) {
+                    try {
+                        val response = imdbService.getMovieDetails(dto.movieId)
+                        response.apply { resultCode = 200 }
+                    } catch (e: Throwable) {
+                        Response().apply { resultCode = 500 }
+                    }
                 }
             }
             else -> {

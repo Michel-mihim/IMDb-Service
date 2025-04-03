@@ -7,23 +7,20 @@ import kotlinx.coroutines.flow.Flow
 
 interface MoviesInteractor {
     fun searchMovies(expression: String): Flow<Pair<List<Movie>?, String?>>
-    fun getMoviesDetails(movieId: String, consumer: MovieDetailsConsumer)
-    fun getMovieCast(movieId: String, consumer: MovieCastConsumer)
 
+    fun getMoviesDetails(movieId: String): Flow<Pair<MovieDetails?, String?>>
+
+
+    fun getMovieCast(movieId: String, consumer: MovieCastConsumer)
+    interface MovieCastConsumer {
+        fun consume(movieCast: MovieCast?, errorMessage: String?)
+    }
     /*
     interface MoviesConsumer{
         fun consume(foundMovies: List<Movie>?, errorMessage: String?)
     }
 
      */
-
-    interface MovieDetailsConsumer {
-        fun consume(movieDetails: MovieDetails?, errorMessage: String?)
-    }
-
-    interface MovieCastConsumer {
-        fun consume(movieCast: MovieCast?, errorMessage: String?)
-    }
 
     fun addMovieToFavorites(movie: Movie)
     fun removeMovieFromFavorites(movie: Movie)

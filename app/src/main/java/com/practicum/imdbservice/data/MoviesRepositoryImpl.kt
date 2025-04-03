@@ -50,15 +50,16 @@ class MoviesRepositoryImpl(
 
     }
 
-    override fun getMovieDetails(movieId: String): Resource<MovieDetails> {
+    override fun getMovieDetails(movieId: String): Flow<Resource<MovieDetails>> = flow {
         val response = networkClient.doRequest(MovieDetailsRequest(movieId))
-        return when (response.resultCode) {
+
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error("Проверьте подключение к интернету")
+                emit(Resource.Error("Проверьте подключение к интернету"))
             }
             200 -> {
                 with(response as MovieDetailsResponse) {
-                    Resource.Success(
+                    emit(Resource.Success(
                         MovieDetails(
                             id = id,
                             title = title,
@@ -71,12 +72,11 @@ class MoviesRepositoryImpl(
                             stars = stars,
                             plot = plot,
                         )
-                    )
+                    ))
                 }
             }
             else -> {
-                Resource.Error("Ошибка сервера")
-
+                emit(Resource.Error("Ошибка сервера"))
             }
         }
     }

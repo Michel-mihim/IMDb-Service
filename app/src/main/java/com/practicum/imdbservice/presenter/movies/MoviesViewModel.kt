@@ -103,49 +103,43 @@ class MoviesViewModel(
 
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
-            renderState(
-                MoviesState.Loading
-            )
 
-            moviesInteractor.searchMovies(
-                newSearchText,
-                object : MoviesInteractor.MoviesConsumer {
-                    override fun consume(foundMovies: List<Movie>?, errorMessage: String?) {
-                        if (foundMovies != null) {
-                            movies.clear()
-                            movies.addAll(foundMovies)
+            renderState(MoviesState.Loading)
+
+            viewModelScope.launch {
+                moviesInteractor.searchMovies(newSearchText).collect { pair ->
+                    if (pair.first != null) {
+                        movies.clear()
+                        movies.addAll(pair.first!!)
+                    }
+
+                    when {
+                        pair.second != null -> {
+                            renderState(
+                                MoviesState.Error(
+                                    errorMessage = application.getString(R.string.something_went_wrong)
+                                )
+                            )
                         }
 
-                        when {
-                            errorMessage != null -> {//error
-                                renderState(
-                                    MoviesState.Error(
-                                        errorMessage = application.getString(R.string.something_went_wrong),
-                                    )
+                        pair.first!!.isEmpty() -> {
+                            renderState(
+                                MoviesState.Empty(
+                                    message = application.getString(R.string.nothing_found)
                                 )
+                            )
+                        }
 
-                                showToast(errorMessage)
-                            }
-
-                            movies.isEmpty() -> {
-                                renderState(
-                                    MoviesState.Empty(
-                                        message = application.getString(R.string.nothing_found),
-                                    )
+                        else -> {
+                            renderState(
+                                MoviesState.Content(
+                                    movies = movies
                                 )
-                            }
-
-                            else -> {
-                                renderState(
-                                    MoviesState.Content(
-                                        movies = movies
-                                    )
-                                )
-                            }
+                            )
                         }
                     }
                 }
-            )
+            }
         }
     }
 
