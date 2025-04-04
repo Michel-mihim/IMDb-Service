@@ -10,17 +10,7 @@ interface MoviesInteractor {
 
     fun getMoviesDetails(movieId: String): Flow<Pair<MovieDetails?, String?>>
 
-
-    fun getMovieCast(movieId: String, consumer: MovieCastConsumer)
-    interface MovieCastConsumer {
-        fun consume(movieCast: MovieCast?, errorMessage: String?)
-    }
-    /*
-    interface MoviesConsumer{
-        fun consume(foundMovies: List<Movie>?, errorMessage: String?)
-    }
-
-     */
+    fun getMovieCast(movieId: String): Flow<Pair<MovieCast?, String?>>
 
     fun addMovieToFavorites(movie: Movie)
     fun removeMovieFromFavorites(movie: Movie)

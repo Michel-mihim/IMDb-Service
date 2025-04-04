@@ -81,22 +81,22 @@ class MoviesRepositoryImpl(
         }
     }
 
-    override fun getMovieCast(movieId: String): Resource<MovieCast> {
+    override fun getMovieCast(movieId: String): Flow<Resource<MovieCast>> = flow {
         val response = networkClient.doRequest(MovieCastRequest(movieId))
-        return when (response.resultCode) {
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error("Проверьте подключение к интернету")
+                emit(Resource.Error("Проверьте подключение к интернету"))
             }
             200 -> {
                 // Осталось написать конвертацию!
                 with(response as MovieCastResponse) {
-                    Resource.Success(
+                    emit(Resource.Success(
                         data = movieCastConverter.convert(response as MovieCastResponse)
-                    )
+                    ))
                 }
             }
             else -> {
-                Resource.Error("Ошибка сервера")
+                emit(Resource.Error("Ошибка сервера"))
             }
         }
     }

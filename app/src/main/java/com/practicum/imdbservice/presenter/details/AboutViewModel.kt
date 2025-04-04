@@ -21,21 +21,16 @@ class AboutViewModel(
 
         viewModelScope.launch {
             moviesInteractor.getMoviesDetails(movieId).collect { pair ->
+                when {
+                    pair.first != null -> {
+                        stateLiveData.postValue(AboutState.Content(pair.first!!))
+                    }
 
-            }
-        }
-        /*
-        moviesInteractor.getMoviesDetails(movieId, object : MoviesInteractor.MovieDetailsConsumer {
-
-            override fun consume(movieDetails: MovieDetails?, errorMessage: String?) {
-                if (movieDetails != null) {
-                    stateLiveData.postValue(AboutState.Content(movieDetails))
-                } else {
-                    stateLiveData.postValue(AboutState.Error(errorMessage ?: "Unknown error"))
+                    else -> {
+                        stateLiveData.postValue(AboutState.Error(pair.second ?: "Unknown error"))
+                    }
                 }
             }
-        })
-
-         */
+        }
     }
 }

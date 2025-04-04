@@ -3,6 +3,7 @@ package com.practicum.imdbservice.domain.impl
 import com.practicum.imdbservice.domain.api.MoviesInteractor
 import com.practicum.imdbservice.domain.api.MoviesRepository
 import com.practicum.imdbservice.domain.models.Movie
+import com.practicum.imdbservice.domain.models.MovieCast
 import com.practicum.imdbservice.domain.models.MovieDetails
 import com.practicum.imdbservice.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -41,12 +42,16 @@ class MoviesInteractorImpl(
         }
     }
 
-    override fun getMovieCast(movieId: String, consumer: MoviesInteractor.MovieCastConsumer) {
-        executor.execute {
+    override fun getMovieCast(movieId: String): Flow<Pair<MovieCast?, String?>> {
+        return repository.getMovieCast(movieId).map { result ->
             // Просто вызываем нужный метод Repository
-            when(val resource = repository.getMovieCast(movieId)) {
-                is Resource.Success -> { consumer.consume(resource.data, null) }
-                is Resource.Error -> { consumer.consume(resource.data, resource.message) }
+            when (result) {
+                is Resource.Success -> {
+                    Pair(result.data, null)
+                }
+                is Resource.Error -> {
+                    Pair(result.data, result.message)
+                }
             }
         }
     }
